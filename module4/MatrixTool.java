@@ -3,19 +3,30 @@
 
 public class MatrixTool {
 
-    public static double[] matrixVectorMult (double[][] A, double[] v)
+    static double[][] matrixMult (double[][] A, double[][] B)
     {
-	// INSERT YOUR CODE HERE:
-
+	    double[][] C = new double[A[0].length][B.length];
+    
+		for(int i=0; i < C.length; i++){ 
+			for(int j=0; j < C[0].length; j++){
+				for(int k=0; k < A[0].length; k++){
+					C[i][j] += A[i][k] * B[k][j];
+				}
+			}
+		}
+		return C;
     }
 
-    public static double[][] matrixMult (double[][] A, double[][] B)
+    static double[] matrixVectorMult (double[][] A, double[] v)
     {
-	// INSERT YOUR CODE HERE to compute A times B.
-	// Here, A and B are just parameters and not the same
-	// as the A and B matrices in main().
-
-	return null;  // Temporarily, so it will compile.
+		double[] y = new double[v.length];
+		
+		for(int i = 0; i<v.length; i++){
+			for(int j = 0; j<A.length; j++){
+				y[i] += A[i][j] * v[j];
+			}
+		}
+		return y;
     }
 
 
@@ -41,23 +52,28 @@ public class MatrixTool {
     
     public static double dotProduct (double[] v, double[] u)
     {
-	// INSERT YOUR CODE HERE
-
-	return 0; // Temporarily
+		double dp = 0;
+		for(int i = 0; i< v.length; i++)
+		{
+			dp += v[i] * u[i];
+		}
+		return dp;
     }
 
     public static double norm (double[] u)
     {
-	// INSERT YOUR CODE HERE
-
-	return 0; // Temporarily
+		double norm = 0;
+		for(int i = 0; i<u.length; i++)
+		{
+			norm += u[i]*u[i];
+		}
+		norm = sqrt(norm);
+		return 0; // Temporarily
     }
 
     public static double[] proj (double[] v, double[] u)
     {
-	// INSERT YOUR CODE HERE to compute the project of v on u.
-
-	return null; // Temporarily
+		return null; // Temporarily
     }
 
     public static double[] sub (double[] u, double[] v)
