@@ -1,38 +1,48 @@
+// Instructions:
+// Compile and execute.
+
 import org.edisonwj.draw3d.*;
 import javafx.application.*;
 import javafx.scene.*;
 import javafx.scene.paint.*;
 import javafx.stage.*;
 
-public class LinComb3DExample2 extends Application {
+public class CoordChange3D extends Application {
 
-    String title = "Vector example";
+    String title = "3D to 2D example";
 
     void drawingCommands () 
     {
-	// Type all drawing commands in here.
-
-	// The three vectors u,v,w:
-	d3.setDrawColor (Color.BLUE);
-	d3.drawVector (1,3,1);
-	d3.drawVector (4,1,0);
-	d3.drawVector (3,2,6);
-
-	// Example of using drawArrow(). The vector z:
-	d3.setDrawColor (Color.BLACK);
-	d3.drawArrow (0,0,0, 1,7,8);
-
-	// Stretched vectors:
-	// Use drawArrow to draw the added stretch.
-	d3.setDrawColor (Color.GREEN);
-	// Write here ...
-
-	// Use drawArrow to draw arrows from the tips of 
-	// the stretched vectors to the final vector z=(1,7,8).
-	d3.setDrawColor (Color.RED);
-	// Write here ...
-	
+	drawCuboid ();
+	drawEye ();
     }
+
+    void drawCuboid ()
+    {
+	// Base.
+	d3.drawLine (5,1,8, 5,3,8);
+	d3.drawLine (5,3,8, 9,3,8);
+	d3.drawLine (9,3,8, 9,1,8);
+	d3.drawLine (9,1,8, 5,1,8);
+
+	// Top
+	d3.drawLine (5,1,11, 5,3,11);
+	d3.drawLine (5,3,11, 9,3,11);
+	d3.drawLine (9,3,11, 9,1,11);
+	d3.drawLine (9,1,11, 5,1,11);
+
+	// Remaining four lines
+	d3.drawLine (5,1,8, 5,1,11);
+	d3.drawLine (5,3,8, 5,3,11);
+	d3.drawLine (9,3,8, 9,3,11);
+	d3.drawLine (9,1,8, 9,1,11);
+    }
+
+    void drawEye ()
+    {
+	d3.drawSphere (15, 12, 11, 0.1);
+    }
+
 
     // No need to read further
     //////////////////////////////////////////////////////////

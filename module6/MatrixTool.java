@@ -76,6 +76,26 @@ public class MatrixTool {
 		return null; // Temporarily
     }
 
+	public static double[] add (double[] u, double[] v)
+	{
+		if(u == null || v == null) return null;
+		if(u.length != v.length) return null;
+		
+		double[] sum = new double[u.length];
+		for(int i = 0; i<u.length; i++) 
+			sum[i] = u[i] + v[i];
+		return sum;
+	}
+	public static double[] scalarMult (double alpha, double[] v)
+	{
+		if(v==null) return null;
+		
+		double[] sp = new double[v.length];
+		for(int i = 0; i<v.length; i++)
+			sp[i] = alpha * v[i];
+		return sp;
+	}
+	
     public static double[] sub (double[] u, double[] v)
     {
 	double[] w = new double [u.length];
