@@ -18,19 +18,19 @@ public class ProjectionExample2 {
 	DrawTool.setArrowColor ("blue");
 	DrawTool.drawVector (v1);
 	DrawTool.drawVector (v2);
-	
+
 	// INSERT YOUR CODE to compute the coordinates alpha1,alpha2
 	// You should get alpha1=0.75, alpha2=0.5
 
 	// Coordinates:
-	double alpha1 = 
-	double alpha2 = 
+	double alpha1 = 0.75;
+	double alpha2 = 0.5;
 	// Projections:
-	double[] y1 = 
-	double[] y2 = 
+	double[] y1 = {4, 3};
+	double[] y2 = {-1, 3};
 
 	System.out.println ("alpha1=" + alpha1 + "  alpha2=" + alpha2);
-	
+
 	DrawTool.setArrowColor ("green");
 	DrawTool.drawVector (y1);
 	DrawTool.drawVector (y2);

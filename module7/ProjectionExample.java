@@ -13,14 +13,14 @@ public class ProjectionExample {
 	DrawTool.drawVector (w);
 
 	// Enter v here:
-	double[] v = 
+	double[] v = {3, 1};
 	DrawTool.setArrowColor ("blue");
 	DrawTool.drawVector (v);
-	
+
 	double alpha = MatrixTool.dotProduct(w,v) / MatrixTool.dotProduct(v,v);
 	System.out.println ("alpha = " + alpha);
 	double[] y = MatrixTool.scalarMult (alpha, v);
-	
+
 	DrawTool.setArrowColor ("red");
 	DrawTool.drawVector (y);
 
