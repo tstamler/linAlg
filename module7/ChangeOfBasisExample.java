@@ -32,12 +32,12 @@ public class ChangeOfBasisExample {
 
 	// Un-comment this block to print both.
 
-	/*
+	
 	changeBasis ();
 
 	System.out.println ("After change of basis:");
 	computeMeanVariance (xp,yp);
-	*/
+	
     }
 
     static void changeBasis ()
