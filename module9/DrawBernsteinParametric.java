@@ -46,10 +46,21 @@ public class DrawBernsteinParametric {
 
     }
 
-    static double bernstein (int n, int k, double t)
+    public static double bernstein (int n, int k, double t)
     {
-	// INSERT YOUR CODE HERE:
+	double b = numCombinations(n,k) * Math.pow (t, k) * Math.pow (1-t,n-k);
+	return b;
+    }
 
+    static double numCombinations (int n, int k)
+    {
+		return factorial(n) / (factorial(k) * factorial(n - k));
+    }
+
+    static double factorial (int n)
+    {
+		if(n == 0 || n == 1) return 1;
+		else return n*factorial(n-1);
     }
 
 }

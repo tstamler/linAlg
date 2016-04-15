@@ -13,15 +13,15 @@ public class DrawCircleParametric {
 
 	double x0 = 2, y0 = 3; 	  // Center:
 	double r = 5;             // Radius
-	double delT = 0.5;        // t-increment for drawing
+	double delT = Math.PI/20;        // t-increment for drawing
 
 	ArrayList<Double> xValues = new ArrayList<Double> ();
 	ArrayList<Double> yValues = new ArrayList<Double> ();
 
 	for (double t=0; t<=2*Math.PI; t+=delT) {
 	    // INSERT YOUR CODE HERE:
-	    double x = ...
-	    double y = ...
+	    double x = x0 + r*Math.cos(t);
+	    double y = y0 + r*Math.sin(t);
 	    xValues.add (x);
 	    yValues.add(y);
 	    DrawTool.drawPoint (x,y);

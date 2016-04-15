@@ -21,14 +21,20 @@ public class DrawCircle {
 
 	// Note: we start x on the left.
 	for (double x=x0-r; x<=x0+r; x+=delX) {
-	    double y = y0 + Math.sqrt (r*r - (x-x0)*(x-x0));
+	    double y1 = y0 + Math.sqrt (r*r - (x-x0)*(x-x0));
 	    xValues.add (x);
-	    yValues.add(y);
-	    DrawTool.drawPoint (x,y);
+	    yValues.add(y1);
+	    DrawTool.drawPoint (x,y1);
 	}
 
 	// INSERT YOUR CODE HERE:
-
+	for (double x=x0+r; x>=x0-r; x-=delX) {
+		double y2 = y0 - Math.sqrt (r*r - (x-x0)*(x-x0));
+		xValues.add (x);
+		yValues.add(y2);
+		DrawTool.drawPoint (x,y2);
+	}
+	
 	// Draw the resulting curve.
 	DrawTool.drawCurve (xValues, yValues);
     }

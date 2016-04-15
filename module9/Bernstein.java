@@ -16,10 +16,11 @@ public class Bernstein {
 
     static void drawBernsteins (int n)
     {
-	ArrayList<Function> bernsteins = new ArrayList<Function> ();
-	for (int k=0; k<=n; k++) {
+	//ArrayList<Function> bernsteins = new ArrayList<Function> ();
+	Function[] bernsteins = new Function[n];
+	for (int k=0; k<n; k++) {
 	    Function F = bernsteinPoly (n, k);
-	    bernsteins.add (F);
+	    bernsteins[k] = F;
 	}
 	Function.show (bernsteins);
     }
@@ -44,14 +45,13 @@ public class Bernstein {
 
     static double numCombinations (int n, int k)
     {
-	// INSERT YOUR CODE HERE:
-
+		return factorial(n) / (factorial(k) * factorial(n - k));
     }
 
     static double factorial (int n)
     {
-	// INSERT YOUR CODE HERE:
-
+		if(n == 0 || n == 1) return 1;
+		else return n*factorial(n-1);
     }
 
 }

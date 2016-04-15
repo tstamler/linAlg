@@ -42,7 +42,7 @@ public class Bezier3D_V1 extends Application {
 	    }
 	}
 
-	/* UN-COMMENT the whole block
+	/* UN-COMMENT the whole block */
 
 	// Now plot the surface as a collection of points. This is
 	// not the best way to draw a surface, but it'll suffice for the demo.
@@ -62,14 +62,25 @@ public class Bezier3D_V1 extends Application {
 	    d3.drawPoint (x,y,z);
 	}
 
-	*/
+	
 	// Un-comment the above block 
     }
 
-    static double bernstein (int n, int k, double t)
+    public static double bernstein (int n, int k, double t)
     {
-	// INSERT YOUR CODE HERE:
+	double b = numCombinations(n,k) * Math.pow (t, k) * Math.pow (1-t,n-k);
+	return b;
+    }
 
+    static double numCombinations (int n, int k)
+    {
+		return factorial(n) / (factorial(k) * factorial(n - k));
+    }
+
+    static double factorial (int n)
+    {
+		if(n == 0 || n == 1) return 1;
+		else return n*factorial(n-1);
     }
 
     static void setControlPoints (int m, int n, BezierPoint3D[][] controlPoints)

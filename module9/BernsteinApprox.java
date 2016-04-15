@@ -12,7 +12,7 @@ public class BernsteinApprox {
 	double delT = 0.05;
 
 	// Try n=3,5,10
-	int n = 3;
+	int n = 100;
 	
 	for (double t=delT; t<=1+delT; t+=delT) {
 
@@ -36,11 +36,21 @@ public class BernsteinApprox {
     {
 	return Math.sin(2*Math.PI*t);
     }
-
-    static double bernstein (int n, int k, double t)
+   
+	public static double bernstein (int n, int k, double t)
     {
-	// INSERT YOUR CODE HERE:
-
+	double b = numCombinations(n,k) * Math.pow (t, k) * Math.pow (1-t,n-k);
+	return b;
     }
 
+    static double numCombinations (int n, int k)
+    {
+		return factorial(n) / (factorial(k) * factorial(n - k));
+    }
+
+    static double factorial (int n)
+    {
+		if(n == 0 || n == 1) return 1;
+		else return n*factorial(n-1);
+    }
 }
