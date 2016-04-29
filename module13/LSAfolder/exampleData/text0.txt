@@ -1,0 +1,1 @@
+The multiplication of a matrix with a vector gives a vector

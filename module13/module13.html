@@ -1,0 +1,1749 @@
+<HTML>
+<HEAD>
+   <TITLE> Linear Algebra </TITLE>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { 
+    extensions: ["color.js"],
+    equationNumbers: { autoNumber: "AMS" } 
+  }
+});
+</script>
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" LINK="#186727">
+
+\(
+\newcommand{\blah}{blah-blah-blah}
+\newcommand{\eqb}[1]{\begin{eqnarray*}#1\end{eqnarray*}}
+\newcommand{\eqbn}[1]{\begin{eqnarray}#1\end{eqnarray}}
+\newcommand{\bb}[1]{\mathbf{#1}}
+\newcommand{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\newcommand{\nchoose}[2]{\left(\begin{array}{c} #1 \\ #2 \end{array}\right)}
+\newcommand{\defn}{\stackrel{\vartriangle}{=}}
+\newcommand{\rvectwo}[2]{\left(\begin{array}{c} #1 \\ #2 \end{array}\right)}
+\newcommand{\rvecthree}[3]{\left(\begin{array}{r} #1 \\ #2\\ #3\end{array}\right)}
+\newcommand{\rvecdots}[3]{\left(\begin{array}{r} #1 \\ #2\\ \vdots\\ #3\end{array}\right)}
+\newcommand{\vectwo}[2]{\left[\begin{array}{r} #1\\#2\end{array}\right]}
+\newcommand{\vecthree}[3]{\left[\begin{array}{r} #1 \\ #2\\ #3\end{array}\right]}
+\newcommand{\vecfour}[4]{\left[\begin{array}{r} #1 \\ #2\\ #3\\ #4\end{array}\right]}
+\newcommand{\vecdots}[3]{\left[\begin{array}{r} #1 \\ #2\\ \vdots\\ #3\end{array}\right]}
+\newcommand{\eql}{\;\; = \;\;}
+\definecolor{dkblue}{RGB}{0,0,120}
+\definecolor{dkred}{RGB}{120,0,0}
+\definecolor{dkgreen}{RGB}{0,120,0}
+\newcommand{\bigsp}{\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;}
+\newcommand{\plss}{\;\;+\;\;}
+\newcommand{\miss}{\;\;-\;\;}
+\newcommand{\implies}{\Rightarrow\;\;\;\;\;\;\;\;\;\;\;\;}
+\)
+
+
+<P>
+<HR></P>
+<H1><FONT COLOR="#191970">Module 13: The Singular Value Decomposition (SVD)
+</FONT></H1>
+<h3><FONT COLOR="#191970">
+</font>
+</h3>
+<P>
+<HR></P>
+<font face="book antiqua" color="#000060">
+
+<h2><FONT COLOR="#000080">
+Module objectives
+</font></h2>
+<P><FONT COLOR="#000060">
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table>
+By the end of this module, you should be able to
+  <ul>
+  <li> Describe the SVD.
+  <li> Explain the relationshiop between SVD and eigenvalues.
+  <li> Explain how the SVD is used in some applications.
+  </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table>
+
+<P>
+<HR></P>
+<h2><FONT COLOR="#000080">
+A review of some ideas
+</font></h2>
+<P><FONT COLOR="#000060">
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+We will review a few key ideas that play a role in the SVD:
+  <ol>
+  <li> Rowspace vs. column space.
+  <li> How a matrix transforms a basis vector of the row space.
+  <li> The space spanned by the eigenvectors.
+  <li> How a matrix transforms a basis vector of the eigen space.
+  </ol>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<b>Idea #1:</b> rowspace vs. columnspace
+  <ul>
+  <li> Consider a simple \(3 \times 5\) matrix:
+        $$
+            {\bf A} 
+            \eql
+            \mat{2 & 1 & 3 & 0 & 3\\
+                 1 & 0 & 1 & 1 & 2\\
+                 3 & 2 & 5 & -1 & 4}
+        $$
+
+  <p><li> Here is an example of this matrix transforming a vector:
+      $$
+            \mat{2 & 1 & 3 & 0 & 3\\
+                 1 & 0 & 1 & 1 & 2\\
+                 3 & 2 & 5 & -1 & 4}
+            \mat{1\\ 3\\ -2\\ 4\\ 1}
+            \eql
+            \mat{2\\ 5\\ -1}
+      $$
+
+  <p><li> Observe:
+      <ul>
+      <Li> Each row vector has 5 elements.
+      <li> The vector being transformed has 5 elements.
+      <li> Each column vector has 3 elements.
+      <li> The result vector has 3 elements.
+      </ul>
+
+  <p><li> Thus, in general when a matrix \({\bf A}_{m \times n}\)
+     transforms a vector \({\bf x}\) into \({\bf b}\),
+        $$
+             {\bf Ax} \eql {\bf b}
+        $$
+     Then
+     <ul>
+     <li> \({\bf x}\) has \(m\) elements.
+     <li>  \({\bf b}\) has \(n\) elements.
+     </ul>
+
+
+  <p><li> We also know:
+     <ul>
+     <li> \({\bf b}\) is in the column space of \({\bf A}\).
+     <li> If \({\bf b}={\bf 0}\), then \({\bf x}\) is in the nullspace.
+     </ul>
+
+  <p><li> Another example with the same matrix:
+      $$
+            \mat{2 & 1 & 3 & 0 & 3\\
+                 1 & 0 & 1 & 1 & 2\\
+                 3 & 2 & 5 & -1 & 4}
+            \mat{1\\ 1\\ 1\\ 2\\ -2}
+            \eql
+            \mat{0\\ 0\\ 0}
+      $$
+      So, the nullspace has non-zero vectors.
+
+  <p><li> Now, the RREF of the above example happens to be:
+     $$
+       \mbox{RREF} ({\bf A}) 
+       \eql
+       \mat{{\bf 1} & 0 & 1 & 1 & 2\\
+           0 & {\bf 1} & 1 & -2 & -1\\
+           0 & 0 & 0 & 0 & 0}
+     $$
+
+  <p><li> Thus, the rowspace has <i>dimension</i> 2.
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\rhd\)
+	  The rank of the matrix is \(r=2\).
+
+  <p><li> The column space also has <i>dimension</i> 2 (since both
+  have the same dimension.
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 1:
+</b>
+What is the dimension of the nullspace?
+</font>
+<!-- 
+3 since dim of rowspace + dim nullspace = n
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+  <p><li> This makes sense because:
+    <ul>
+    <li> It takes 5 basis vectors to span 5D space.
+    <li> If a subspace of 5D (the rowspace) has two vectors in its basis,
+         the orthogonal complement (the nullspace) needs <i>three</i> vectors
+         for <i>its</i> basis.
+    </ul>
+
+  <p><li> Next, let's look at a potential basis for each of the
+      row and column space.
+
+  <p><li> For the row space, we pick the two pivot rows of the RREF:
+       $$\eqb{
+          {\bf r}_1 & \eql & (1,0,1,1,2)\\
+          {\bf r}_2 & \eql & (0,1,1,-2,-1)\\
+       }$$
+
+  <p><li> For the column space, we need the original vectors that
+    were in the pivot columns:
+     $$
+         {\bf c}_1 = \vecthree{2}{1}{3} 
+         \;\;\;\;\;\;
+         {\bf c}_2 = \vecthree{1}{0}{2} 
+     $$
+
+  </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<b>Idea #2:</b> Applying the matrix to one of the rowspace basis vectors:
+  <ul>
+  <li> What happens when we apply
+    \({\bf A}\) to a basis vector of the row space?
+    <ul>
+    <li> For example:
+       $$
+           {\bf Ar}_1 \eql 
+            \mat{2 & 1 & 3 & 0 & 3\\
+                 1 & 0 & 1 & 1 & 2\\
+                 3 & 2 & 5 & -1 & 4}
+            \mat{1\\ 0\\ 1\\ 1\\ 2}
+            \eql
+            \mat{11\\ 7\\ 15}
+       $$
+    <li> Since \((11,7,15)\) is in the column space, it can
+         be expressed as a linear combination of the basis
+         vectors of the column space:
+         $$
+             \vecthree{11}{7}{15} \eql
+              7 \vecthree{2}{1}{3} - 3 \vecthree{1}{0}{2}
+         $$
+    </ul>
+
+  <p><li> Thus far, nothing surprising.    
+
+  <p><li> Let's look at another example:
+     $$
+         {\bf A}
+         \eql
+         \mat{2 & 1 & 3\\
+              1 & 0 & 1\\
+              3 & 1 & 2}
+     $$
+
+  <p><Li> In this case, the RREF is
+     $$
+         \mbox{RREF}({\bf A})
+         \eql
+         \mat{1 & 0 & 0\\
+              0 & 1 & 0\\
+              0 & 0 & 1}
+     $$
+     which means:
+     <ul>
+     <li> The row and column spaces both have dimension 3.
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\rhd\)
+	  3 vectors are sufficient for the basis.
+     <li> Because both are 3D
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\rhd\)
+          The <i>same</i> basis will work for both.
+
+     <li> Thus, for example, the standard basis
+        $$
+            {\bf e}_1 \; = \; \mat{1\\0\\0}
+            \;\;\;\;\;\;
+            {\bf e}_2 \; = \; \mat{0\\1\\0}
+            \;\;\;\;\;\;
+            {\bf e}_3 \; = \; \mat{0\\0\\1}
+        $$
+        works for both the row space and column space.
+     </ul>
+
+
+  <p><li> Let's now apply the matrix to one of the row space basis
+    vectors, e.g., the last one:
+    $$
+         \mat{2 & 1 & 3\\
+              1 & 0 & 1\\
+              3 & 1 & 2}
+         \vecthree{0}{0}{1}
+         \eql
+         \vecthree{3}{1}{2}
+    $$
+
+  <p><li> Notice that the result is, unsurprisingly, a linear
+     combination of the standard vectors.
+
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<b>Idea #3:</b> eigenvectors as a basis
+  <ul>
+  <Li> Consider the previous \(3\times 3\) example:
+      $$
+         {\bf A}
+         \eql
+         \mat{2 & 1 & 3\\
+              1 & 0 & 1\\
+              3 & 1 & 2}
+     $$
+
+  <p><li> It so happens that 
+        $$
+            {\bf x}_1 \; = \; \mat{0.707\\0\\-0.707}
+            \;\;\;\;\;\;
+            {\bf x}_2 \; = \; \mat{0.18\\-0.967\\0.18}
+            \;\;\;\;\;\;
+            {\bf x}_3 \; = \; \mat{0.684\\0.255\\0.684}
+        $$
+     are eigenvectors with eigenvalues \(-1, -0.372, 5.372\), respectively.
+
+  <p><li> For example
+     $$
+         {\bf Ax}_1 
+         \eql
+         \mat{2 & 1 & 3\\
+              1 & 0 & 1\\
+              3 & 1 & 2}
+         \mat{0.707\\0\\-0.707}
+         \eql 
+         -1
+         \mat{0.707\\0\\-0.707}
+     $$
+  <p><li> Because \({\bf A}\) is symmetric, we know (Theorem 12.1) 
+  that the eigenvectors form a <i>basis</i>:
+    <ul>
+    <li> They are a basis for 3D space, in this case.
+    <li> Which means, they are a basis for <i>both</i> the column and
+         row spaces.
+    </ul>
+
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<b>Idea #4:</b> Applying the matrix to an eigenbasis vector:
+  <ul>
+  <Li> Recall from above that \({\bf x}_1, {\bf x}_2, {\bf x}_3\)
+    form a <i>basis</i> for the row and column space.
+
+  <p><li> Thus, we get the unusual result that, when applying
+    \({\bf A}\) to a basis vector of the row space,
+    we get a scalar multiple of <i>a basis vector of the column
+    space</i>:
+      $$
+         {\bf Ax}_i 
+         \eql
+          \lambda_i {\bf x}_i
+      $$
+    Here \({\bf x}_i\) is a vector in both the row and column space bases.
+
+
+  <p><li> In other words, \({\bf A}\) <i>maps the row basis
+   to the column basis</i> when we choose the basis to be the eigenbasis.
+
+
+  <p><li> Now, such a thing cannot be possible for an arbitrary
+    matrix \({\bf A}_{m\times n}\).
+
+  <p><li> No vector could possibly be in both the row and column space
+  bases for a non-square matrix.
+
+  <p><li> However, what <i>might</i> be possible is that there is 
+  <i>some</i> row space basis \({\bf v}_1,{\bf v}_2,\ldots,{\bf v}_r\)
+  and <i>some</i> column space basis \({\bf u}_1,{\bf u}_2,\ldots,{\bf u}_r\)
+  such that
+     $$
+         {\bf A}{\bf v}_i \eql \mbox{ some multiple of } {\bf u}_i
+     $$
+
+
+  <p><li> This is indeed the case, as we'll see next.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table>
+
+
+Consider, for any matrix \({\bf A}_{m\times n}\) the
+product \({\bf B}_{n\times n} = {\bf A}^T {\bf A}\):
+  <ul>
+  <li> \({\bf B}\) is symmetric.
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 2:
+</b>
+Why is this true?
+</font>
+<!-- 
+Let B = A^T A. Then 
+   Bij = (B^T)ji = ((A^T A)^T)ji = (A^T A)ji = Bji
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+  <p><li> By the spectral theorem, we can write
+     $$
+         {\bf B} \eql {\bf V} {\bf D} {\bf V}^T
+     $$
+     where:
+     <ul>
+     <Li> The columns of \({\bf V}\) are eigenvectors 
+          \({\bf v}_1,{\bf v}_2,\ldots,{\bf v}_n\) of \({\bf B}\).
+     <li> \({\bf D}\) is a diagonal matrix with the eigenvalues
+          \(\lambda_1,\lambda_2,\ldots,\lambda_n\) on the
+          diagonal.
+     </ul>
+
+  
+  <p><li> Now consider the vectors
+     $$
+        {\bf Av}_1,   {\bf Av}_2, \ldots,  {\bf Av}_n
+     $$
+     (Recall: \({\bf A}_{m\times n}\) is the original matrix.)
+
+  <p><li> Each such \({\bf Av}_i\) is in the column space of 
+    \({\bf A}\).
+
+  <p><li> Consider the dot product of any two of these:
+     $$\eqb{
+          ({\bf Av}_i) \cdot ({\bf Av}_j)
+          & \eql &
+          ({\bf Av}_i)^T ({\bf Av}_j)\\
+          & \eql &
+          ({\bf v}_i^T {\bf A}^T) ({\bf Av}_j)\\
+          & \eql &
+          {\bf v}_i^T ({\bf A}^T {\bf A}) {\bf v}_j\\
+          & \eql &
+          {\bf v}_i^T {\bf B} {\bf v}_j\\
+          & \eql &
+          {\bf v}_i^T \lambda_j {\bf v}_j\\
+          & \eql &
+          \lambda_j {\bf v}_i^T {\bf v}_j\\
+          & \eql &
+          0
+     }$$
+     since the \({\bf v}_i\)'s are orthogonal.
+
+  <p><li> Thus, the vectors 
+     $$
+        {\bf Av}_1,   {\bf Av}_2, \ldots,  {\bf Av}_n
+     $$
+     are orthogonal. 
+     
+  <p><li> But not necessarily <i>orthonormal</i>.
+
+  <p><li> If name these vectors \({\bf w}_i = {\bf Av}_i\), notice
+   that 
+     $$\eqb{
+        {\bf w}_i \dot {\bf w}_i
+        & \eql &
+          \lambda_i {\bf v}_i^T {\bf v}_i
+        & \eql &
+          \lambda_i 
+     }$$
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 3:
+</b>
+Why is the last step true?
+</font>
+<!-- 
+v_i's are orthonormal so that the dot-product, or length^2 is 1.
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+    
+  <p><li> This means that 
+     $$
+        |{\bf w}_i| \eql \sqrt{\lambda_i}
+     $$
+
+
+  <p><li> We will normalize the \({\bf w}_i\)'s and define
+     $$\eqb{
+         {\bf u}_i & \defn & 
+           \frac{1}{|{\bf w}_i|} {\bf w}_i
+         & \eql & 
+          \frac{1}{\sqrt{\lambda_i}} {\bf Av}_i
+     }$$
+
+  <p><li> With a new symbol \(\sigma_i \defn
+  \sqrt{\lambda_i}\), this becomes
+     $$
+         {\bf Av}_i \eql \sigma_i {\bf u}_i
+     $$
+
+  <p><li> Finally, recall that Proposition 8.6 tells us that
+    \({\bf A}\) and \({\bf A}^T{\bf A}\) have the same rank.
+
+
+  <p><li> Suppose the rank is r.
+
+  <p><li> Then, Theorem 12.3 tells us that there are r nonzero
+   eigenvalues.
+
+  <p><li> Suppose we renumber the eigenvalues and eigenvectors so that
+     $$
+        \lambda_1 \geq \lambda_2 \geq \ldots \geq \lambda_r
+     $$
+     where
+     $$
+       \lambda_{r+1} = \lambda_{r+2} = \ldots = 0.
+     $$
+
+  <p><li> Then, \({\bf v}_1,{\bf v}_2,\ldots,{\bf v}_r\)
+    are an <i>orthogonal</i> basis for the rowspace of \({\bf A}\).
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\rhd\)
+	  Why? Because the row rank is \(r\) and so \(r\) orthogonal
+	  vectors form a basis.
+
+  <p><li> And,  similarly, \({\bf u}_1,{\bf u}_2,\ldots,{\bf u}_r\)
+    are an <i>orthogonal</i> basis for the colspace of \({\bf A}\).
+
+  <p><li> What we have done is derived a simple relationship between
+  these:
+     $$
+         {\bf Av}_i \eql \sigma_i {\bf u}_i
+     $$
+     
+  </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Now, let's compare the two cases (symmetric, general) 
+side by side.
+  <table border="2" cellpadding="2">
+     <tr>
+        <td width="50%"> <b>Symmetric matrix</b> \({\bf A}_{n\times n}\)</td>
+        <td> <b> General matrix </b>  \({\bf A}_{m\times n}\)</td>
+     </tr>
+     
+     <tr>
+        <td> 
+            Suppose rank = r
+        </td>
+        <td> 
+            Suppose rank = r
+        </td>
+     </tr>
+
+     <tr>
+        <td> 
+            <ul>
+            <li>
+            There are r eigenvectors \({\bf x}_1,{\bf x}_2,\ldots,{\bf
+            x}_r\)
+            <li> And r <i>nonzero</i> eigenvalues \(\lambda_1,\lambda_2,\ldots,\lambda_r\)
+            such that \({\bf Ax}_i = \lambda_i {\bf x}_i\)
+            <li> \({\bf x}_1,{\bf x}_2,\ldots,{\bf x}_r\) are a basis
+                 for both rowspace and colspace.
+            </ul>
+        </td>
+        <td> 
+            <ul>
+            <li> There are r rowspace basis vectors 
+               \({\bf v}_1,{\bf v}_2,\ldots,{\bf v}_r\)
+            <li> And r colspace basis vectors
+               \({\bf u}_1,{\bf u}_2,\ldots,{\bf u}_r\)
+            <li> And r nonzero numbers \(\sigma_1,\sigma_2,\ldots,\sigma_r\)
+                 such that \({\bf Av}_i = \sigma_i {\bf u}_i\)
+            </ul>
+        </td>
+     </tr>
+  </table>
+
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+<P>
+<HR></P>
+<h2><FONT COLOR="#000080">
+The singular value decomposition (SVD)
+</font></h2>
+<P><FONT COLOR="#000060">
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+There are three forms of the SVD for a matrix \({\bf A}_{m\times n}\)
+with rank \(r\):
+  <ol>
+  <li> The long form, with nullspace bases included.
+  <li> The short form (up to rank r)
+  <li> The outerproduct form with r terms.
+  </ol>
+We will look at each in turn, although the latter two are what's
+practical in applications.
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+The long form of the SVD:
+  <ul>
+  <li> Consider a matrix matrix \({\bf A}_{m\times n}\)
+       with rank \(r\).
+  <p><li> Recall that 
+     $$
+         {\bf Av}_i \eql \sigma_i {\bf u}_i
+     $$
+     where the \({\bf v}_i\)'s are orthonormal rowspace basis vectors
+     and \({\bf u}_i\)'s are orthonormal colspace basis vectors.
+
+  <p><li> And where 
+     $$
+         \sigma_1 \geq \sigma_2 \geq \ldots \geq \sigma_r \geq
+          \sigma_{r+1} = \sigma_{r+2} = \ldots = 0.
+     $$
+
+  <P><Li> Put the \({\bf v}_i\)'s as columns in a matrix \({\bf
+     V}^\prime_{n\times r}\):
+     $$
+       {\bf V}^\prime
+       \eql
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf v}_1 & {\bf v}_2 & \cdots & {\bf v}_r\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+
+     $$
+
+  <p><li> Similarly, put the \({\bf u}_i\)'s as columns in a matrix
+  \({\bf U}^\prime_{m\times r}\):
+     $$
+       {\bf U}^\prime
+       \eql
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf u}_1 & {\bf u}_2 & \cdots & {\bf u}_r\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+
+     $$
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 4:
+</b>
+How many rows do 
+\({\bf V}^\prime\) and \({\bf U}^\prime\) have? Why?
+</font>
+<!-- 
+
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  <p><Li> Next, define the diagonal matrix \({\bf \Sigma}_{r\times r}\)
+   $$
+       {\bf \Sigma}^\prime
+       \eql
+      \mat{\sigma_1 & 0         &        & 0 \\
+           0         & \sigma_2 &        & 0 \\
+           \vdots    &           & \ddots & \\
+           0         & 0         &        & \sigma_r      
+      }
+   $$
+
+  <p><li> As we did with the spectral decomposition, we can write the
+  relationship between \({\bf v}_i\)'s and \({\bf u}_i\)'s as
+  as 
+    $$
+        {\bf AV}^\prime \eql {\bf U}^\prime{\bf \Sigma}^\prime
+    $$
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 5:
+</b>
+Confirm that the matrix multiplications are size-compatible and
+that the dimensions on both sides match.
+</font>
+<!-- 
+
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  <p><li> Now recall that \({\bf A}\) has \(n\)
+    columns while \({\bf V}^\prime\) has \(r\) columns
+    <ul>
+    <li> The rank of \({\bf A}\)'s colspace is r.
+    <li> The rank of \({\bf A}\)'s nullspace is therefore \(n-r\).
+    </ul>
+   
+  <p><li> We can use Gram-Schmidt to find an orthonormal
+   basis for the nullspace of \({\bf A}\)
+    <ul>
+    <li> This will need \(n-r\) vectors.
+    <li> Let's call these vectors 
+          \({\bf v}_{r+1},{\bf v}_{r+2},\ldots,{\bf v}_n\).
+    </ul>
+
+  <p><li> Assuming we've found such vectors, we'll expand
+    the matrix \({\bf V}^\prime\) to add these as columns
+    and call the resulting matrix \({\bf V}\):
+    $$
+       {\bf V}
+       \eql
+       \mat{ &  &  & & & & \\
+         \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+         {\bf v}_1 & {\bf v}_2 & \cdots & {\bf v}_r &
+             {\bf v}_{r+1} & \cdots & {\bf v}_n \\
+         \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+          & & & & & & \\
+         }
+    $$
+
+  <p><li> Note: \({\bf V}\) is \(n\times n\).
+
+
+  <p><li> In a similar way, it is possible to expand
+    \({\bf U}^\prime\) into a matrix \({\bf U}_{m\times m}\).
+
+  <p><li> Lastly, we'll expand \({\bf \Sigma}^\prime\) into
+  an \(m\times n\) matrix by adding as many zeroes as necessary.
+
+  <p><li> Because \({\bf V}\) is orthogonal, the earlier
+    relationship
+    $$
+        {\bf AV} \eql {\bf U} {\bf \Sigma}
+    $$
+    can be multiplied on the right by \({\bf V}^T\) to give
+    $$
+        {\bf A} \eql {\bf U} {\bf \Sigma} {\bf V}^T
+    $$
+
+  <p><li> In other words, any matrix \({\bf A}\) can be decomposed as
+    $$
+      {\bf A} \eql 
+        \mbox{ an ortho matrix } \times \mbox{ diagonal matrix }
+        \times
+        \mbox{ an ortho matrix } 
+    $$
+
+  
+
+  <p><li> This is the <i>singular value decomposition</i>.
+
+  <p><li> Let's write out the matrix dimensions for clarity:
+    $$
+        {\bf A}_{m\times n} \eql {\bf U}_{m\times m} {\bf
+    \Sigma}_{m\times n} {\bf V}^T_{n\times n}
+    $$
+
+  <p><LI> We will call this the long form of the SVD.
+
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+The short form:
+  <ul>
+  <li> Because every entry other than the first \(r\) diagonal 
+   values of \({\bf \Sigma}\) are zero, the decomposition can
+   be reduced to
+    $$
+        {\bf A}_{m\times n} \eql {\bf U}_{m\times r} {\bf
+    \Sigma}_{r\times r} {\bf V}^T_{r\times n}
+    $$
+
+  <p><li> The reduced matrices are the ones we started with earlier:
+    $$
+        {\bf A}_{m\times n} \eql {\bf U}^\prime_{m\times r} {\bf
+    \Sigma}^\prime_{r\times r} {\bf V}^{\prime T}_{r\times n}
+    $$
+
+  </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Let's look at an example to clarify:
+  <ul>
+  <li> Consider the matrix
+        $$
+            {\bf A} 
+            \eql
+            \mat{2 & 1 & 3 & 0 & 3\\
+                 1 & 0 & 1 & 1 & 2\\
+                 3 & 2 & 5 & -1 & 4}
+        $$
+
+  <p><li> In long form, the SVD turns out to be:
+     $$
+            \mat{2 & 1 & 3 & 0 & 3\\
+                 1 & 0 & 1 & 1 & 2\\
+                 3 & 2 & 5 & -1 & 4}
+            \eql
+            \mat{0.528 &  -0.235 &  -0.816\\
+                 0.240 &  -0.881 &   0.408\\
+                 0.815 &   0.411 &   0.408}
+            \mat{9.060 & 0 & 0 & 0 & 0\\
+                 0    & 1.710 & 0 & 0 & 0\\
+                 0 & 0 & 0 & 0 & 0}
+
+            \mat{0.413 & 0.238 & 0.651 & -0.063 & 0.587\\
+                 -0.068 & 0.344 & 0.276 & -0.756 & -0.479\\
+                  1 & -2 & 1 & 0 & 0\\
+                  1 & -1 & 0 & 1 & 0\\
+                  -1 & -2 & 0 & 0 & 1}
+     $$
+     where
+     $$
+            {\bf U} \eql
+            \mat{0.528 &  -0.235 &  -0.816\\
+                 0.240 &  -0.881 &   0.408\\
+                 0.815 &   0.411 &   0.408}
+            \;\;\;\;\;
+            {\bf \Sigma} \eql
+            \mat{9.060 & 0 & 0 & 0 & 0\\
+                 0    & 1.710 & 0 & 0 & 0\\
+                 0 & 0 & 0 & 0 & 0}
+            \;\;\;\;\;
+            {\bf V} \eql
+            \mat{0.413 & -0.068 &  1  & 1  & -1\\
+                 0.238 &  0.344 &  -2 & -1 & -2\\
+                 0.651 &  0.276 &   1 & 0  & 0\\
+                 -0.063 & -0.756 &  0 & 1  & 0 \\
+                 0.587 & -0.479 &   0 & 0  & 1}
+     $$
+
+
+  <p><li> Now look at the product \({\bf U\Sigma V}^T\).
+
+  <p><li> Suppose we first multiply \({\bf U\Sigma}\) in 
+     \(({\bf U\Sigma}){\bf V}^T\).
+
+  <p><li> In the above example, because the third row of \({\bf
+  \Sigma}\) is zero,
+   $$
+            \mat{0.528 &  -0.235 &  -0.816\\
+                 0.240 &  -0.881 &   0.408\\
+                 0.815 &   0.411 &   0.408}
+            \mat{9.060 & 0 & 0 & 0 & 0\\
+                 0    & 1.710 & 0 & 0 & 0\\
+                 0 & 0 & 0 & 0 & 0}
+            \eql
+            \mat{0.528 &  -0.235 \\
+                 0.240 &  -0.881 \\
+                 0.815 &   0.411 }
+            \mat{9.060 & 0 & 0 & 0 & 0\\
+                 0    & 1.710 & 0 & 0 & 0}
+            \eql
+            \mat{4.784 & -0.402 & 0 & 0 & 0\\
+                 2.174 & -1.507 & 0 & 0 & 0\\
+                 7.384 &  0.703 & 0 & 0 & 0}
+   $$
+
+  <p><li> Furthermore, the resulting matrix has the last three
+  columns with zeroes.
+
+  <p><li> This means that we can ignore the last three rows of 
+    \({\bf V}^T\), since those elements will get multiplied by
+    these zeroes:
+    $$
+            \mat{4.784 & -0.402 & 0 & 0 & 0\\
+                 2.174 & -1.507 & 0 & 0 & 0\\
+                 7.384 &  0.703 & 0 & 0 & 0}
+            \mat{0.413 & 0.238 & 0.651 & -0.063 & 0.587\\
+                 -0.068 & 0.344 & 0.276 & -0.756 & -0.479\\
+                  1 & -2 & 1 & 0 & 0\\
+                  1 & -1 & 0 & 1 & 0\\
+                  -1 & -2 & 0 & 0 & 1}
+            \eql
+            \mat{4.784 & -0.402\\
+                 2.174 & -1.507\\
+                 7.384 &  0.703}
+            \mat{0.413 & 0.238 & 0.651 & -0.063 & 0.587\\
+                 -0.068 & 0.344 & 0.276 & -0.756 & -0.479}
+    $$
+
+  <p><li> Thus, the only relevant information is in the first \(r\)
+   columns of \({\bf U}\) and the first \(r\) rows of  \({\bf U}^T\)
+
+  <p><li> So, if we trimmed all three matrices accordingly, we would
+  have the short form:
+    $$
+        {\bf A} \eql {\bf U}_{m\times r} {\bf \Sigma}_{r\times r} {\bf
+  V}^T_{r\times n}
+    $$
+
+  <p><li> Note: in the short form \({\bf V}_{n\times r}\) has \(r\)
+  columns.
+
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 6:
+</b>
+Download and examine and the code in 
+<a href="examples/SVDExample.java">SVDExample.java</a>.
+Then compile and execute to confirm the above.
+</font>
+<!-- 
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<p> Next, the outer-product form:
+  <ul>
+  <li> Recall:
+     <ul>
+     <li> Suppose a matrix \({\bf A}\) has <i>columns</i> \({\bf a}_1, {\bf a}_2,\ldots,{\bf a}_k\).
+     <Li> Suppose \({\bf B}\) has <i>rows</i> \({\bf b}_1, {\bf
+     b}_2,\ldots,{\bf b}_k\).
+     <li> Then, the outerproduct form of \({\bf AB}\) is
+     $$
+         {\bf AB} \eql \sum_{i=1}^k {\bf a}_i {\bf b}_i^T
+     $$
+
+     </ul>
+
+  <p><li> We will now write the SVD in this form.
+
+  <p><li> Start by looking at
+     $$
+        {\bf U\Sigma}
+        \eql
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf u}_1 & {\bf u}_2 & \cdots & {\bf u}_r\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+      \mat{\sigma_1 & 0         &        & 0 \\
+           0         & \sigma_2 &        & 0 \\
+           \vdots    &           & \ddots & \\
+           0         & 0         &        & \sigma_r      
+      }
+      \eql
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         \sigma_1{\bf u}_1 & \sigma_2{\bf u}_2 & \cdots & \sigma_r{\bf u}_r\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+     $$
+
+  <p><li> Now, right-multiply by \({\bf V}^T\) for the SVD:
+    <ul>
+    <li> The rows of \({\bf V}^T\) are the <i>columns</i> of \({\bf V}\).
+    <li> These are the vectors 
+               \({\bf v}_1,{\bf v}_2,\ldots,{\bf v}_r\).
+    <li> Thus, in outer product form:
+        $$
+          {\bf U\Sigma V}^T = \sum_{k=1}^r \sigma_k {\bf u}_k {\bf v}_k^T
+        $$
+    </ul>
+
+  <p><li> In other words, we can write any matrix \({\bf A}\) as
+        $$
+          {\bf A} = \sum_{k=1}^r \sigma_k {\bf u}_k {\bf v}_k^T
+        $$
+  
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+
+<P>
+<HR></P>
+<h2><FONT COLOR="#000080">
+Using the SVD outerproduct form for compression
+</font></h2>
+<P><FONT COLOR="#000060">
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Recall that any matrix can be expressed in terms of the columns
+of \({\bf U}\) and \({\bf V}\), with \(\sigma_k\):
+        $$
+          {\bf A} = \sum_{k=1}^r \sigma_k {\bf u}_k {\bf v}_k^T
+        $$
+
+<p>
+We'll now explore the idea of using fewer terms in the sum:
+        $$
+          {\bf A}_p = \sum_{k=1}^p \sigma_k {\bf u}_k {\bf v}_k^T
+        $$
+where \(p \leq r\).
+
+<p> Why do this?
+  <ul>
+  <li> First, note that using fewer terms implies an approximation:
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\rhd\)
+	  The question is: is \({\bf A}_p \approx {\bf A}\)?
+
+  <p><li> There is a <i>storage</i> advantage to using fewer terms:
+     <ul>
+     <li> To store \({\bf A}\) we need \(m \times n\) space.
+     <li> To store a pair of vectors \({\bf u}_k\) and \({\bf v}_k\),
+          we need \(m+n\) space.
+     </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 7:
+</b>
+Why is the storage of the two vectors \(m+n\)?
+For \(p\) such terms, what is the total storage,
+and when is this less than \(m \times n\)? When is
+it greater? Provide some example values of \(m,n\).
+</font>
+<!-- 
+Columns of u have length m, columns of v have length n.
+ <font color="#000000"><pre>
+    k(m+n) < mn
+     (m+n) < mn/k
+ </pre></font>
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  <p><li> Next, we need to know how accurate the approximation is.  
+
+  <p><li> Or, how small can \(p\) be to get a reasonable approximation?
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 8:
+</b>
+Download and examine the code in 
+<a href="examples/SVDExample2.java">SVDExample2.java</a>
+to confirm that it computes the outerproduct as written above.
+Try \(p=1\) and \(p=r\) to compare the resulting matrix
+with the original. 
+How poor an approximation do we get with \(p=1\)?
+</font>
+<!-- 
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  </ul>
+
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+We'll now explore this notion with images:
+  <ul>
+  <li> We'll treat a greyscale image as a matrix.
+
+  <p><li> Using the approximation, we'll reconstruct an image
+    to see if it's reasonable.
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 9:
+</b>
+Download and edit
+<a href="examples/ImageExample.java">ImageExample.java</a>
+to try various values of \(p\) as directed.
+With what value of \(p\) do you get a reasonable approximation?
+Examine the actual images (the file names should be obvious).
+You will also need 
+<a href="examples/ImageTool.java">ImageTool.java</a>
+and 
+<a href="examples/Sylvester.png">this test image</a>.
+</font>
+<!-- 
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+  <p><li> Thus, as we increase \(p\), we get more terms in the sum,
+  and therefore a better approximation of the original matrix (image).
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Interestingly, there is a nice theoretical result to support this
+approach:
+  <ul>
+  <li> Suppose that, for any two matrices \({\bf A}\) and \({\bf B}\) 
+   we wish to <i>quantify</i> how close \({\bf A}\) is to \({\bf B}\).
+
+  <p><li> One way to do this is to use the so-called <i>Frobenius</i>
+   distance:
+   $$
+      \left|{\bf A} - {\bf B}\right|_F
+      \eql
+      \sqrt{ \sum_{i,j} ({\bf A}_{ij} - {\bf B}_{ij})^2}
+   $$
+
+  <p><li> Thus, earlier, when we used 
+        $$
+          {\bf A}_p = \sum_{k=1}^p \sigma_k {\bf u}_k {\bf v}_k^T
+        $$
+     to approximate \({\bf A}\), we'd like to know whether the
+     Frobenius distance 
+     $$
+          \left|{\bf A}_p - {\bf A}\right|_F
+     $$
+     is small.
+
+  <p><li> An important observation: the rank of \({\bf A}_p\) 
+   is \(p\).
+    <ul>
+    <li> Why is this?
+    <li> \({\bf A}_p\)  can be computed from the SVD
+          $$
+                {\bf A}_p \eql {\bf U\Sigma V}^T
+          $$
+         by setting \(\sigma_{p+1} = \sigma_{p+2} = \ldots = \sigma_{r} = 0\).
+
+    <li> Then, the rank of this modified \({\bf \Sigma}\) is \(p\).
+    <li> Then, by Proposition 12.4 (or the proof of Theorem 12.3), 
+         the rank of \({\bf A}_p\) is \(p\).
+    </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 10:
+</b>
+Explain why setting \(\sigma_{p+1} = \sigma_{p+2} = \ldots =
+  \sigma_{r} = 0\) in the SVD results in the same
+computation as \(p\) terms of the sum of outerproducts?
+Also, why is \(p\) the rank of the modified \({\bf \Sigma}\)?
+</font>
+<!-- 
+p is the rank because only p entries on the diagonal are nonzero
+Converting the modified SVD results in the smaller outerproduct.
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  <p><li> In the 1950's, mathematicians Carl Eckhart and Gale Young proved
+  a remarkable result: the best p-rank approximation to a matrix
+  \({\bf A}\) is \({\bf A}_p\).
+
+  <p><li> That is, if we look at all the p-rank matrices (lower rank,
+  therefore less space perhaps) of the same size as \({\bf A}\),
+  then \({\bf A}_p\) is closest in Frobenius distance.
+
+  <p><li> We'll state the theorem without proof. 
+
+  <p><li><b>Theorem 13.1:</b> Let the rank of \({\bf A}\) be \(r\)
+  and let \({\bf B}\) be any matrix with rank \(p < r\). Then,
+  \(\left\|{\bf A}_p - {\bf A}\right\|_F \leq 
+    \left\|{\bf B} - {\bf A}\right\|_F\).
+
+  <p><li> Eckhart and Young also were the first to formally prove
+   the existence of the full SVD, with a method for constructing
+   the remaining (nullspace) columns of \({\bf U}\) and \({\bf V}\).
+
+
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Some terminology:
+  <ul>
+  <li> The numbers \(\sigma_i\) along the diagonal of \({\bf \Sigma}\)
+       are called the <i>singular values</i>.
+
+  <p><li> The columns of \({\bf U}\) are called the 
+    <i>left singular vectors</i>
+
+  <p><li> The columns of \({\bf V}\) are called the 
+    <i>right singular vectors</i>
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+
+<P>
+<HR></P>
+<h2><FONT COLOR="#000080">
+Latent semantic analysis (LSA): applying the SVD to text data
+</font></h2>
+<P><FONT COLOR="#000060">
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Let's begin by understanding two problems with text data:
+  <ol>
+  <li> The <i>clustering</i> problem: given a collection of documents,
+  place the documents into topic-related clusters.
+     <ul>
+     <li> We'll use the term <i>document</i> to mean any blob of text.
+     <li> A document could be small (a few words) or very large.
+     <li> For this discussion, we'll treat a document as an
+          unsorted collection of words.
+     </ul>
+  <p><li> The <i>search</i> problem: given a collection of documents and
+  a new <i>query</i> document, find the documents in the collection
+  that best match the query document.
+      <ul>
+      <li> The query "document" could just be a group of search terms.
+      </ul>
+  </ol>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Key ideas in LSA:
+  <ul>
+  <li> Documents will be converted into numeric vectors.
+
+  <p><Li> Each document will be a column in the data matrix.
+
+  <p><li> Then we will compute the SVD.
+
+  <p><li> To sharpen the results, we'll ignore (zero out) some
+   of the singular values \(\sigma_k\).
+
+  <p><li> We'll then use the column vectors of the basis \({\bf U}\)
+    to get the coordinates of the data in this basis.
+
+  <p><li> Lastly, we'll use the transformed coordinates for both
+    clustering and search.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Document vectors:
+  <ul>
+  <li> Let's use an example.
+
+  <p><li> A <i>document</i> is a collection of words.
+
+  <p><li> Consider the following four documents:
+     <ol>
+     <li> <b>Document 1:</b> "The multiplication of a matrix with a vector gives a vector"
+     <li> <b>Document 2:</b> "Matrix multiplication is not commutative, but vector dot product is."
+
+     <li> <b>Document 3:</b> "A balance sheet is like a cost matrix but shows revenue, cost and profit."
+
+     <li> <b>Document 4:</b> "A cost matrix shows items and costs"
+     </ol>
+
+  <p><li> The first step is to identify a core list of words:
+     <ul>
+     <li> We'll ignore so-called <i>stop words</i> like "is, a, the" etc.
+     <li> Remove all words that occur in only one document.
+     </ul>
+
+  <p><li> We're left with the following 5 words:
+    <font color="#000000"><tt>cost, matrix, multiplication, shows</tt></font> and <font color="#000000"><tt>vector</tt></font>.
+
+  <p><li> We'll now assign numbers to these words:
+     <font color="#000000"><pre>
+      1   cost
+      2   matrix
+      3   multiplication
+      4   shows
+      5   vector
+     </pre></font>
+
+  <p><li> Next, we'll build the word-document matrix \({\bf D}\):
+        $$
+            {\bf D}_{ij} =
+              \left\{
+               \begin{array}{ll}
+                   1 & \mbox{  if word i is in document j}\\
+                   0 & \mbox{  otherwise}
+               \end{array}
+              \right.
+        $$
+ 
+ <p><li> Thus, in our example:
+    $$
+       {\bf D} \eql
+       \mat{ 0 & 0 & 1 & 1\\
+             1 & 0 & 1 & 1\\
+             1 & 1 & 0 & 0\\
+             0 & 0 & 1 & 1\\
+             1 & 1 & 0 & 0}
+    $$
+
+
+ <p><li> The average of the columns is the vector
+     $$
+        {\bf \mu} \eql
+          \mat{0.5 \\ 0.75 \\ 0.5 \\ 0.5\\ 0.5}
+     $$
+
+ <p><li> Then, we center the data by subtracting off the mean column
+ vector from each column:
+    $$
+        {\bf X} \eql
+           \mat{ -0.5 & -0.5  & 0.5   &  0.5\\
+                 0.25 & -0.75 & 0.25  & 0.25\\
+                 0.5  & 0.5   & -0.5  & -0.5\\
+                -0.5 &  -0.5  & 0.5   & 0.5\\
+                0.5  &  0.5   & -0.5  & -0.5}
+    $$
+
+ <p><li> This will be the data used in the SVD.
+
+ <p><li> Recall the SVD:
+   $$
+       {\bf X} \eql {\bf U} {\bf \Sigma} {\bf V}^T
+   $$
+   
+ <p><li> Next, let \(r\) be the rank so that:
+    <ul>
+    <li> The first \(r\) singular values are nonzero:
+         \(\sigma_1 \geq \sigma_2 \geq \ldots \geq \sigma_r > 0\)
+    <li> The others are zero: \(\sigma_{r+1} = \sigma_{r+2} = \ldots = 0\).
+    </ul>
+
+ <p><li> Here, the first \(r\) columns of \({\bf U}\) are a basis
+   for the data.
+
+ <p><li> We will use this basis for a change of coordinates.
+
+ <p><li> And 
+    $$
+       {\bf U} \eql 
+         \mat{-0.481 & 0.136\\
+              -0.272 & -0.962\\
+               0.481 & -0.136\\
+              -0.481 &  0.136\\
+               0.481 & -0.136}
+        \;\;\;\;\;\;
+       {\bf \Sigma} \eql 
+         \mat{2.070 &  0\\
+              0      & 0.683}
+        \;\;\;\;\;\;
+       {\bf V}^T \eql
+         \mat{0.432 & 0.564 & -0.498 & -0.498\\
+             -0.751 & 0.658 &  0.047 &  0.047}
+    $$ 
+  (This is the short form of the SVD).
+
+ <p><li> Notice that the rank happened to be \(r=2\). 
+
+ <p><li> In other cases, with a higher rank, we might want to zero-out
+   low singular values and use a small value of \(r\).
+
+ <p><li> How do we change coordinates using the basis \({\bf U}\)?
+    <ul>
+    <li> Suppose \({\bf x}\) is a vector in the standard basis.
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\rhd\)
+	  The components of \({\bf x}\) are coordinates in the
+	  standard basis.
+    <li> Then, the coordinates in the new basis are
+         $$\eqb{
+             {\bf y} & \eql & {\bf U}^{-1} {\bf x}\\
+                     & \eql & {\bf U}^{T} {\bf x}\\
+         }$$
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 11:
+</b>
+Why is this last step true?
+</font>
+<!-- 
+U is orthogonal
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+    </ul>
+
+ <p><li> Let \({\bf x}_1, {\bf x}_2, \ldots, {\bf x}_n\) be the
+  columns of the centered data \({\bf X}\).
+    $$
+        {\bf X} \eql
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf x}_1 & {\bf x}_2 & \cdots & {\bf x}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+    $$
+
+ <p><li> To change coordinates, we're going to apply 
+    \({\bf U}^T\) to each column:
+    $$
+        {\bf y}_i \eql {\bf U}^T {\bf x}_i
+    $$
+
+ <p><li> For convenience, we'll now put the \({\bf y}_i\)'s as columns 
+    in a matrix \({\bf Y}\) so that
+    $$
+        {\bf Y} \eql {\bf U}^T {\bf X}
+    $$
+
+ <p><li> This will allow us to substitute the SVD \({\bf X}={\bf
+ U\Sigma V}^T\)
+    $$\eqb{
+        {\bf Y} & \eql & {\bf U}^T {\bf X}\\
+                & \eql & {\bf U}^T {\bf U\Sigma V}^T\\
+                & \eql & {\bf \Sigma V}^T
+    }$$
+   as an alternative way to compute the change in coordinates.
+
+
+ <p><li> What do we do with the new coordinates?
+
+ </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Using the new coordinates for clustering:
+  <ul>
+  <li> There are many options for clustering.
+
+  <p><li> One approach is to compute the covariance and identify
+     highly-related documents.
+
+  <p><li> Another is to use PCA or kernel-PCA, followed by a standard 
+    clustering algorithm.
+
+
+  <p><Li> Note: in computing the covariance, it's more common
+   to use a ordinal-based covariance like the Spearman correlation
+   coefficient.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Using the new coordinates for search:
+  <ul>
+  <li> In the search problem:
+     <ul>
+     <li> We are given new <i>query</i> document.
+     <li> We've already computed the changed coordinates of every
+          document in the collection.
+     </ul>
+
+  <p><li> We first compute the document vector \({\bf q}\) of
+     the new query document.
+
+  <p><li> Then we subtract off the mean:
+    $$
+        {\bf q}^\prime \eql {\bf q} - {\bf \mu}
+    $$
+
+  <p><li> Then, we get <i>its</i> new coordinates by 
+     $$
+         {\bf y}^\prime \eql {\bf U}^T {\bf q}^\prime 
+     $$
+
+  <p><li> Now, we compare against each transformed document
+     \({\bf y}_i\) to see which one is closest.
+
+  <p><li> One way to determine closest: find the vector \({\bf y}_i\) 
+    whose angle with \({\bf y}^\prime\) is the least.
+
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 12:
+</b>
+Download and unzip <a href="examples/LSA.zip">LSA.zip</a>,
+then compile and execute <font color="#000000"><tt>LSA.java</tt></font> to 
+see the above example. 
+  <ol>
+  <li> Read the code to verify the above computations in clustering.
+  <li> Change the data set as directed. What are the resulting 
+       sizes of the matrices \({\bf U},{\bf \Sigma}\) and 
+       \({\bf V}^T\)?
+  </ol>
+</font>
+<!-- 
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Why is this approach of using the SVD called <i>latent semantic analysis</i>?
+  <ul>
+  <li> One interpretation of the new basis vectors \({\bf u}_i\), 
+     that is, the columns of \({\bf U}\) is that they are 
+     a kind of "pseudo" document.
+
+  <p><li> For example, consider \({\bf u}_1\) in the example above,
+    along with the corresponding words
+    <font color="#000000"><pre>
+    -0.481    cost
+    -0.272    matrix
+     0.481    multiplication
+    -0.481    shows
+     0.481    vector
+    </pre></font>
+
+  <p><li> What interpretation can we assign to these numbers?
+     <ul>
+     <li> Think of \(-0.481\) as the contribution of the word
+          "cost" to the pseudo-document \({\bf u}_1\).
+     </ul>
+
+  <p><li> Then, two data vectors that are close are likely to 
+     have similar first coordinate.
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\rhd\)
+	  Which means the word "cost" has similar value in each of the
+	  two documents.
+
+  <p><li> Another way to think about it:
+     <ul>
+     <Li> The coordinate transformation highlights shared words.
+     <li> Thus, two documents with many shared words will have a small
+          angle in the new coordinates.
+     </ul>
+  </ul>
+
+
+
+
+<P>
+<HR></P>
+<h2><FONT COLOR="#000080">
+Image clustering and search using SVD
+</font></h2>
+<P><FONT COLOR="#000060">
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+The ideas of clustering and search above can be applied to
+any dataset that can be <i>vectorized</i>.
+
+<p>
+So, the real question is: how do we turn images into vectors?
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Making a vector out of an image:
+  <ul>
+  <li> First, we'll consider making a vector out of a raw image.
+
+  <p><li> Let's examine greyscale images.
+     <ul>
+     <li> A greyscale image is a 2D array of numbers.
+     <li> Typically, each number is a value between 0 and 255, 
+          representing intensity.
+     <li> Suppose the image is stored in an 
+          array <font color="#000000"><tt>pixels[i][j]</tt></font> of size M rows by N columns.
+     </ul>
+
+  <p><li> A simple way to make this a vector:
+    <ul>
+    <li> Take the first column of the 2D array, the
+         numbers 
+           <font color="#000000"><pre>
+	      pixels[0][0]
+              pixels[1][0]
+              ... 
+	      pixels[M-1][0]
+           </pre></font>
+    <li> Then append the second column:
+           <font color="#000000"><pre>
+	      pixels[0][0]
+              pixels[1][0]
+              ... 
+	      pixels[M-1][0]
+
+	      pixels[0][1]
+              pixels[1][1]
+              ... 
+	      pixels[M-1][1]
+           </pre></font>
+    <li> Then, the third, and so on.
+    <li> The resulting vector is the vector representation of a single
+    image.
+    </ul>
+
+  <p><li> We convert each image into a vector. 
+
+  <p><li> s before, for search or clustering, each image is converted
+    into a vector and these are transformed into the coordinates
+    based on the SVD.
+
+  <p><li> Search and clustering proceed exactly as described for
+     text once the coordinates are changed.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 13:
+</b>
+Download and unzip <a href="examples/imageSearch.zip">imageSearch.zip</a>,
+then compile and execute <font color="#000000"><tt>ImageSearch.java</tt></font> to 
+see the above example. 
+  <ol>
+  <li> Read the code to verify the above computations.
+  <li> Print the size of \({\bf U}\).
+  <li> Examine the files in the <font color="#000000"><tt>eigenImages</tt></font>. What are these
+       images? What do they correspond to in the SVD?
+  </ol>
+</font>
+<!-- 
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+<P>
+<HR></P>
+<h2><FONT COLOR="#000080">
+Other applications of the SVD
+</font></h2>
+<P><FONT COLOR="#000060">
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+The SVD has turned out to be one of the most useful tools
+in linear algebra.
+
+<p>
+We will list some other applications below.
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Application: finding the effective rank of a matrix.
+  <ul>
+  <li> Sometimes we wish to know the rank of a matrix.
+
+  <p><li> If a large matrix is low rank, one can look for
+  a more compact representation.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Application: filling out a sparse matrix (the Netflix problem)
+  <ul>
+  <li> Recall from Module 1, the user-movie ratings matrix where
+    \({\bf A}_{ij}\) is the rating assigned by user i to movie j.
+
+  <p><li> Generally, we are given a very sparse matrix with the objective
+    of filling in the other entries 
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\rhd\)
+	  Guessing a user's likely rating of a particular movie.
+
+  <p><li> One way is to apply the SVD to \({\bf A}\) and <i>reduce</i>
+   some of the low singular values to zero:
+    <ul>
+    <li> Compute \({\bf A}={\bf U\Sigma V}^T\).
+    <li> Pick K and set \(\sigma_k=0\) for all \(k \geq K\).
+    <li> Call the resulting diagonal matrix \({\bf \Sigma}^\prime\).
+    <li> Then compute \({\bf A}^\prime = {\bf U\Sigma}^\prime {\bf V}^T\).
+    </ul>
+
+  <p><li> The hope is that the resulting matrix \({\bf A}^\prime\)
+   has lots of nonzero entries, from which ratings can be estimated.
+
+
+  <p><li> Just as in latent semantic analysis, the vectors in 
+    \({\bf U}\) lend themselves to interpretation:
+    <ul>
+    <li> Each vector \({\bf u}_i\) among the first r columns can be
+         thought of as a "proto-user" with well-defined ratings.
+    <Li> Then \({\bf U}_{ij}\) is how proto-user i rates movie j.
+    </ul>
+
+  <p><li> Similarly each \({\bf v}_{j}\) can be interpreted as 
+    how movie j gets rated by "most proto-users".
+
+  <p><li> It turns out several improvements are possible to the basic
+    SVD algorithm.
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\rhd\)
+	  Many of these combined into a winning algorithm for the
+	  Netflix prize.
+
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 14:
+</b>
+Suppose \({\bf \Sigma}\) is a square diagonal matrix with
+\(\sigma_i\) as the i-th entry on the diagonal. What is
+the inverse of \({\bf \Sigma}\)?
+</font>
+<!-- 
+Inv has 1/sigma_i along the diagonal
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+<font color="#8B4513"><b> In-Class Exercise 15:
+</b>
+If \({\bf A}\) is a full-rank square matrix with
+SVD \({\bf A}={\bf U\Sigma V}^T\),
+then show that \({\bf A}^{-1}={\bf V\Sigma^{-1} U}^T\) 
+with \({\bf \Sigma}^{-1}\) computed as in the above exercise.
+</font>
+<!-- 
+Simple multiplication.
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Application: pseudoinverse
+  <ul>
+  <li> If \({\bf A}\) is not square, we can use the SVD to 
+   define an approximate inverse.
+       
+  <p><li> Clearly, because \({\bf U}\) and \({\bf V}\) are
+    orthogonal and square, they already have inverses.
+
+  <p><li> The problem is \({\bf \Sigma}\) is not necessarily square
+   and may not have full rank even if it is.
+
+
+  <p><Li> But, let's use the idea from the exercise above.
+
+  <p><li> Define the matrix \({\bf \Sigma}^+\) as follows:
+     <ul>
+     <li> For each nonzero diagonal entry \(\sigma_k\) in \({\bf \Sigma}\),
+          let \(\frac{1}{\sigma_k}\) be the corresponding entry in \({\bf \Sigma}^+\) 
+     </ul>
+
+  <p><li> Then, the product \({\bf V\Sigma^{+} U}^T\) is somewhat
+   like an inverse.
+
+  <p><li><b>Definition:</b> The pseudoinverse of a matrix \({\bf A}\)
+    is defined as \({\bf A}^+ = {\bf V\Sigma^{+} U}^T\).
+
+
+  <p><li> When \({\bf A}\) is square and invertible, \({\bf A}^+ =
+  {\bf A}^{-1}\).
+
+
+  <p><li> What do we know about \({\bf A}^+\) in general?
+
+  <p><Li> Is the pseudoinverse useful in solving \({\bf Ax}={\bf b}\)
+    when \({\bf A}\) has no inverse?
+
+  <p><li> Define the "approximate" solution 
+      $$
+          {\bf x}^+ \eql {\bf A}^+ {\bf b}
+      $$
+
+  <p><li> \({\bf A}^+\) has a nice properties:
+     <ul>
+     <Li> It is equivalent to the true inverse when the true inverse exists.
+     <li> \({\bf x}^+\) minimizes \(|{\bf b} - {\bf Ax}|^2\) over
+       all vectors \({\bf x}\).
+     <li> Moreover, \({\bf z}\) is any other solution that
+          minimizes \(|{\bf b} - {\bf Ax}|^2\), then 
+          \(|{\bf x}^+| \leq |{\bf z}|\).
+     </ul>
+
+  <p><li> The last property implies that the solution from the
+   pseudoinverse is the "best" in some sense.
+
+
+  <p><LI> Recall: the RREF is very sensitive to numerical errors.
+
+  <p><li> Thus, it's best to use \({\bf x}^+\).
+
+  <p><li> It turns out that computing the SVD can be made numerically robust.
+  </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+
+
+<P>
+<HR WIDTH="100%"></P>
+<center>
+<font size="1">
+&copy; 2016, Rahul Simha
+</font>
+</center>
+
+</BODY>
+</HTML>
