@@ -1,0 +1,1748 @@
+<HTML>
+<HEAD>
+   <TITLE> Linear Algebra </TITLE>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { 
+    extensions: ["color.js"],
+    equationNumbers: { autoNumber: "AMS" } 
+  }
+});
+</script>
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" LINK="#186727">
+
+\(
+\newcommand{\blah}{blah-blah-blah}
+\newcommand{\eqb}[1]{\begin{eqnarray*}#1\end{eqnarray*}}
+\newcommand{\eqbn}[1]{\begin{eqnarray}#1\end{eqnarray}}
+\newcommand{\bb}[1]{\mathbf{#1}}
+\newcommand{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\newcommand{\nchoose}[2]{\left(\begin{array}{c} #1 \\ #2 \end{array}\right)}
+\newcommand{\defn}{\stackrel{\vartriangle}{=}}
+\newcommand{\rvectwo}[2]{\left(\begin{array}{c} #1 \\ #2 \end{array}\right)}
+\newcommand{\rvecthree}[3]{\left(\begin{array}{r} #1 \\ #2\\ #3\end{array}\right)}
+\newcommand{\rvecdots}[3]{\left(\begin{array}{r} #1 \\ #2\\ \vdots\\ #3\end{array}\right)}
+\newcommand{\vectwo}[2]{\left[\begin{array}{r} #1\\#2\end{array}\right]}
+\newcommand{\vecthree}[3]{\left[\begin{array}{r} #1 \\ #2\\ #3\end{array}\right]}
+\newcommand{\vecfour}[4]{\left[\begin{array}{r} #1 \\ #2\\ #3\\ #4\end{array}\right]}
+\newcommand{\vecdots}[3]{\left[\begin{array}{r} #1 \\ #2\\ \vdots\\ #3\end{array}\right]}
+\newcommand{\eql}{\;\; = \;\;}
+\definecolor{dkblue}{RGB}{0,0,120}
+\definecolor{dkred}{RGB}{120,0,0}
+\definecolor{dkgreen}{RGB}{0,120,0}
+\newcommand{\bigsp}{\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;}
+\newcommand{\plss}{\;\;+\;\;}
+\newcommand{\miss}{\;\;-\;\;}
+\newcommand{\implies}{\Rightarrow\;\;\;\;\;\;\;\;\;\;\;\;}
+\)
+
+
+<P>
+<HR></P>
+<H1><FONT COLOR="#191970">Module 12: Eigenworld
+</FONT></H1>
+<h3><FONT COLOR="#191970">
+Part II: Symmetric matrices, spectral theorem, clustering
+</font>
+</h3>
+<P>
+<HR></P>
+<font face="book antiqua" color="#000060">
+
+<h2><FONT COLOR="#000080">
+Module objectives
+</font></h2>
+<P><FONT COLOR="#000060">
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table>
+By the end of this module, you should be able to
+  <ul>
+  <li> Explain the terms: spectral theorem, diagonalization,
+       eigenbasis.
+  <li> Explain the main ideas in spectral clustering.
+  </ul>
+
+
+<P>
+<HR></P>
+<h2><FONT COLOR="#000080">
+A review of some ideas
+</font></h2>
+<P><FONT COLOR="#000060">
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Let's review a few results that will be useful in this module:
+  <ol>
+  <Li> How to write the matrix product \({\bf AB}\) in terms
+       of the columns of \({\bf B}\).
+  <li> How to change coordinates from one basis to another.     
+  <li> How to write multiple eigenvector-eigenvalue pairs in matrix form.
+  <li> The inverse of an orthogonal matrix.
+  <li> The product of a single-column matrix and a single-row matrix
+  </ol>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<b>Useful fact #1:</b> the product \({\bf AB}\) can be written in
+terms of the columns of \({\bf B}\) as
+  $$
+     {\bf AB} \eql  
+    {\bf A}
+    \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf b}_1 & {\bf b}_2 & \cdots & {\bf b}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+    \eql
+    \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf A b}_1 & {\bf A b}_2 & \cdots & {\bf A b}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+  $$
+That is, we stack the individual \({\bf A b}_i\) products (which 
+are vectors) as columns in the result.
+
+<p> See Module 4 for the proof.
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<b>Useful result #2:</b> change of coordinates
+  <ul>
+  <li> The problem is this:
+     <ul>
+     <li> Suppose \({\bf v}\) is a vector in the standard basis.
+     <li> Suppose \({\bf x}_1,{\bf x}_2,\ldots,{\bf x}_n\) is another
+          basis.
+     <li> We want the <i>coordinates</i> of the vector \({\bf v}\) in
+          this second basis.
+     </ul>
+
+  <p><li> Recall the <i>meaning</i> of coordinates:
+    <ul>
+    <li> If \({\bf v}=(v_1,v_2,\ldots,v_n)\) then
+         $$
+            {\bf v} \eql 
+              v_1 \vecfour{1}{0}{\vdots}{0} 
+              + v_2 
+              v_1 \vecfour{0}{1}{\vdots}{0} 
+              \ldots
+              + v_n \vecfour{0}{0}{\vdots}{1}           
+            \eql            
+            v_1 {\bf e}_1 + v_2{\bf e}_2 + \ldots + v_n{\bf e}_n
+         $$
+    <li> Thus, the vector \({\bf v}\)'s coordinates are the
+         coefficients of the linear combination used to 
+         construct \({\bf v}\) using the standard basis vectors.
+    </ul>
+
+  <p><li> To get the same vector's coordinates in another basis,
+    we need to ask: what linear combination of the new basis 
+    vectors will produce the same vector?
+
+  <p><li> Thus, if the basis consists of the vectors 
+     \({\bf x}_1,{\bf x}_2,\ldots,{\bf x}_n\),
+     we want to find \(\alpha_1,\alpha_2,\ldots,\alpha_n\) such that
+     $$
+       {\bf v} \eql \alpha_1 {\bf x}_1 + \alpha_2 {\bf x}_2
+          + \ldots + \alpha_n {\bf x}_n
+     $$
+
+  <p><li> Once we find such \(\alpha_i\)'s, then the
+    coordinates are: \((\alpha_1,\alpha_2,\ldots,\alpha_n)\)
+
+  <p><li> Which we can write in vector form as:
+     $$
+        {\bf u} \eql (\alpha_1,\alpha_2,\ldots,\alpha_n)
+     $$
+
+  <p><li> To find the \(\alpha_i\)'s
+     <ul>
+     <li> Write the linear combination in matrix form:
+     $$
+       {\bf v} \eql \alpha_1 {\bf x}_1 + \alpha_2 {\bf x}_2
+          + \ldots + \alpha_n {\bf x}_n
+       \eql
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf x}_1 & {\bf x}_2 & \cdots & {\bf x}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+       \mat{\alpha_1\\ \alpha_2 \\ \vdots \\ \alpha_n}
+     $$
+     <li> Let's name the matrix above \({\bf X}\).
+     <li> Then, we've written
+       $$
+          {\bf v} \eql {\bf X u}
+       $$
+     <li> And so,
+       $$
+          {\bf u} \eql {\bf X}^{-1} {\bf v}
+       $$       
+     </ul>
+
+  <p><li> Thus, the procedure is:
+     <ul>
+     <li> Create a matrix with the new basis vectors as columns.
+     <li> Invert the matrix.
+     <li> Multiply into old coordinates.
+     </ul>
+  </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<b>Useful fact #3:</b> writing eigenvector-eigenvalue pairs in matrix form.
+  <ul>
+  <li> Recall the definition of an eigenvector: the vector \({\bf x}\)
+    is an eigenvector of matrix \({\bf A}\) if there is a scalar
+    \(\lambda\) such that 
+      $$
+            {\bf Ax} \eql \lambda {\bf x}
+      $$
+
+  <p><li> We could alternatively have defined <i>eigenvalue</i> first:
+     <ul>
+     <li> A number \(\lambda\) is an eigenvalue of matrix \({\bf A}\)
+          if there exists a vector \({\bf x}\) such that 
+          \({\bf Ax} = \lambda {\bf x}\).
+     <li> Then, the vector \({\bf x}\) is the associated eigenvector
+          for eigenvalue \(\lambda\).
+     </ul>
+
+  <p><li> Sometimes the two are called an <i>eigenpair</i>.
+
+  <p><li> A matrix could have several eigenvalues (as we've seen), and
+    therefore several eigenpairs.
+
+  <p><li> Note: we exclude the zero vector from the definition, since
+  trivially, \({\bf A 0} = \lambda {\bf 0}\) for any number \(\lambda\).
+
+  <p><li> Suppose \(\lambda_1,\lambda_2,\ldots,\lambda_r\) are
+     eigenvalues with corresponding eigenvectors
+     \({\bf x}_1,{\bf x}_2,\ldots,{\bf x}_r\).
+
+  <p><li> Now suppose we place the \({\bf x}_i\)'s as columns 
+    in a matrix \({\bf S}\):
+    $$
+       {\bf S}
+       \eql
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf x}_1 & {\bf x}_2 & \cdots & {\bf x}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+    $$
+
+  <p><li> Then
+    $$\eqb{
+       {\bf A S}
+       \eql
+       {\bf A}
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf x}_1 & {\bf x}_2 & \cdots & {\bf x}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }\\
+       \eql
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf A x}_1 & {\bf A x}_2 & \cdots & {\bf A x}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }\\
+
+       \eql
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         \lambda_1{\bf x}_1 & \lambda_2{\bf x}_2 & \cdots & \lambda_n{\bf x}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }\\
+    }$$
+
+  <p><li> Next, suppose we define the <i>diagonal</i> matrix
+    $$
+      {\bf \Lambda} \eql
+      \mat{\lambda_1 & 0         &        & 0 \\
+           0         & \lambda_2 &        & 0 \\
+           \vdots    &           & \ddots & \\
+           0         & 0         &        & \lambda_r      
+      }
+    $$
+
+  <p><li> Then, the above matrix product becomes
+     $$
+       {\bf A S}
+       \eql
+       {\bf S \Lambda}
+     $$
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 1:
+</b>
+Prove that this is the case. Is \( {\bf A S}= {\bf \Lambda S}\)?
+
+</font>
+<!--
+AS is not Lambda S. That would multiply each row of S by each
+lambda. We need each column to be multiplied.
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<b>Useful fact #4:</b>
+recall that, for an <i>orthogonal matrix</i> \({\bf S}\)
+  <ul>
+  <li> The columns are pairwise <i>orthonormal</i>.
+  <p><li> \({\bf S}^{-1} = {\bf S}^T\)
+  </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Finally, recall what a <i>symmetric</i> matrix is: 
+a matrix \({\bf A}\) where \({\bf A}^T = {\bf A}\).
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<b>Useful fact #5:</b> The product of a column times a row is a matrix
+  <ul>
+  <li> Suppose \({\bf A}_{m\times k}\) and \({\bf B}_{k\times n}\)
+       are two multiply-compatible matrices.
+
+  <p><li> Then \({\bf C}={\bf AB}\) has dimensions \(m\times n\).
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 2:
+</b>
+What are the dimension of \({\bf C}\) when 
+\({\bf A}\) is \(m\times 1\) and \({\bf B}\) is \(1\times n\)?
+Create an example with \(m=3\) and \(n=4\).
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  <p><li> Another way of writing this:
+    <ul>
+    <li> Suppose \({\bf u}\) and \({\bf v}\) are m-dimensional 
+         and n-dimensional vectors.
+    <li> Then the product
+        $$
+             {\bf u} {\bf v}^T
+        $$
+        has dimensions \(m\times n\).
+    </ul>
+
+  <p><li> Thus, the product of a column-vector times a row-vector (the
+   transpose) is a <i>matrix</i>!
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 3:
+</b>
+Suppose \({\bf a}_m\) is the vector 
+\({\bf a}_m=(1,1,\ldots,1)\) with \(m\) 1's.
+Calculate 
+  \({\bf a}_4 {\bf a}_4^T + 2 {\bf a}_4 {\bf a}_4^T + 3 {\bf a}_4 {\bf a}_4^T\).
+(Here m=n.)
+</font>
+<!--
+A 4x4 matrix with "5" as its elements.
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  
+  </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<b>Useful fact #6:</b> The outerproduct form of matrix multiplication:
+  <ul>
+  <li> This is a slight variation of fact #5 above, but useful to know.
+
+  <p><li> Suppose \({\bf A}_{m\times k}\) and \({\bf B}_{k\times n}\)
+       are two matrices with product \({\bf C}={\bf AB}\).
+
+  <p><li> Let \({\bf a}_1, {\bf a}_2,\ldots,{\bf a}_k\) 
+     be the vectors corresponding to the <i>columns</i> of \({\bf A}\).
+
+  <p><li> Let \({\bf b}_1, {\bf b}_2,\ldots,{\bf b}_k\) the vectors
+     corresponding be the <i>rows</i> of \({\bf B}\).
+
+  <p><li> Note: there are \(k\) rows.
+
+  <p><li> Then we can write
+     $$
+         {\bf AB} \eql \sum_{i=1}^k {\bf a}_i {\bf b}_i^T
+     $$
+
+  <p><li> Note:
+     <ul>
+     <li> Each \({\bf a}_i\) is in column form.
+     <Li> The <i>vector</i> \({\bf b}_i\) is made into a row with transpose.
+     <li> The product \({\bf a}_i {\bf b}_i^T\) is a matrix.
+     <li> Thus, the right side is a sum of <i>matrices</i>.
+     </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 4:
+</b>
+Demonstrate the above with an example using m=2, k=3, n=4.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+  </ul>
+
+
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<P>
+<HR></P>
+<h2><FONT COLOR="#000080">
+Eigentheory
+</font></h2>
+<P><FONT COLOR="#000060">
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 5:
+</b>
+Suppose \({\bf A}\) is a \(2\times 2\) rotation matrix that
+rotates a vector by \(45^\circ\). 
+Explain why there cannot be a vector \({\bf x}\) and number
+\(\lambda\) such that 
+\( {\bf Ax}= \lambda {\bf x}\).
+</font>
+<!--
+Every vector is rotated. No vector is just stretched.
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+It turns out that rotation matrices do have <i>complex</i> 
+eigenvalues and <i>complex</i> eigenvectors.
+
+<p> That is, we can find \(\lambda, {\bf x}\) such that
+\( {\bf Ax}= \lambda {\bf x}\), where 
+\(\lambda\) is a complex <i>number</i> and 
+\({\bf x}\) is a complex <i>vector</i>.
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+About the theory relating to eigenvectors:
+  <ul>
+  <li> Unfortunately, very little of the theory of eigenvectors is 
+       simple.
+  <p><li> We will omit the theory because we want to get to the
+          practical part: symmetric matrices.
+  <p><li> Let's however summarize a few key results.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Existence of eigenvalues:
+  <ul>
+  <li> Generally, most matrices have eigenvalues, if we allow
+    complex eigenvalues and eigenvectors.
+
+  <p><li> Proving this is not straightforward.
+
+  <p><li> There are at least a couple different approaches:
+
+  <p><li> One approach: use the <i>characteristic polynomial</i>
+    <ul>
+    <li> Every matrix has an associated polynomial \(p(\lambda)\)
+         where \(p(\lambda)=0\) if and only if \(\lambda\) is an eigenvalue.
+    <li> Example: 
+       $$
+            p(\lambda) \eql \lambda^3 - 3\lambda + 2
+       $$
+    <li> Furthermore, \(p(\lambda)\) is of degree \(n\)
+         for an \(n\times n\) matrix.
+    <li> The theory of determinants is used to define and prove
+         the above result.
+    <li> The Fundamental Theorem of Algebra implies that \(p(\lambda)=0\) 
+         has \(n\) complex roots if the degree is \(n\).
+    </ul>
+
+  <p><li> Some of the complex roots can be real (the imaginary part
+         happens to be zero).
+  </ul>
+  
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Multiplicity:
+  <ul>
+  <li> The characteristic polynomial also provides another 
+     fundamental insight: <i>potential multiplicity of eigenvalues</i>
+
+  <p><li> For example
+       $$\eqb{
+            p(\lambda) & \eql & \lambda^3 - 3\lambda + 2\\
+             & \eql &
+             (\lambda - 1) (\lambda - 1) (\lambda - 2)
+       }$$
+      <ul>
+      <li> There are three roots: 
+             $$\eqb{
+	         \lambda_1 & \eql & 1\\
+	         \lambda_2 & \eql & 1\\
+	         \lambda_3 & \eql & 2\\
+             }$$
+      <li> We usually say there are <i>two</i> eigenvalues, one
+           of which has a multiplicity of two.
+     </ul>
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+An important result for <i>real symmetric matrices</i>:
+  <ul>
+  <li> Recall: a matrix \({\bf A}\) is symmetric if 
+       \({\bf A}^T = {\bf A}\).
+
+  <p><li> Note: a symmetric matrix is necessarily square.
+
+  <p><li> We'll first state the result and then explain.
+
+  <p><li><b>Theorem 12.1:</b> 
+    If \({\bf A}_{n\times n}\) is a real symmetric matrix then
+    <ol>
+    <li> All its eigenvalues \(\lambda_1,\lambda_2,\ldots,\lambda_n\)
+         (with possible multiplicities) are real.
+    <Li> There exist \(n\) corresponding 
+         eigenvectors \({\bf x}_1,{\bf x}_2,\ldots,{\bf x}_n\)
+         such that the matrix 
+         $$
+          {\bf S} 
+          \defn
+          \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf x}_1 & {\bf x}_2 & \cdots & {\bf x}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+         $$
+         is orthogonal.
+    </ol>
+
+  <p><li> This is not at all obvious, nor easy to prove.
+
+  <p><li> But let's understand what it's saying.
+
+  <p><li> We know the matrix \({\bf A}\) will have \(n\) 
+          eigenvalues.
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\rhd\)
+          This comes from the theory described above. 
+
+  <p><li> But could some of them be complex?
+
+  <p><li> Theorem 12.1 says, however, that <i>all</i> will be real.
+
+  <p><li> Now one could believe that for distinct eigenvalues,
+          the corresponding eigenvectors will be different.
+
+  <p><li> What the theorem in fact says is:
+    <ul>
+    <li> Suppose \(\lambda_i=\lambda_j\) is a multiplicity.
+    <li> That is, two eigenvalues that happen to be the same.
+    <li> Then, one can actually find two different and <i>orthogonal</i>
+         eigenvectors for these two eigenvalues.
+    </ul>
+
+  <p><li> The method for finding these eigenvectors 
+          is a bit involved, and won't be covered in this course.
+
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 6:
+</b>
+Download <a href="examples/SymmetricExample.java">SymmetricExample.java</a>,
+which computes the eigenvalues and eigenvectors. Verify that the
+columns of \({\bf S}\) are orthogonal.
+</font>
+<!--
+Compute X^T * X = I
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Applications of eigentheory:
+  <ul>
+  <li> Our main goal is to get to an important technique in 
+       machine learning: <i>principal component analysis</i> (PCA)
+
+  <p><li> For this purpose we will need the <i>spectral theorem</i> (next).
+
+  <p><li> Note: eigenvalues and vectors have some important applications in
+  engineering:
+    <ul>
+    <li> The solution to certain types of differential equations.
+    <li> The solution to some kinds of recurrence relations.
+    <Li> Circuit analysis.
+    </ul>
+
+  <p><li> Perhaps the most important application of all is the
+    singular value decomposition (SVD), which we will study
+    in the next module.
+  </ul>
+
+
+<P>
+<HR></P>
+<h2><FONT COLOR="#000080">
+The spectral theorem for real symmetric matrices
+</font></h2>
+<P><FONT COLOR="#000060">
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Our main goal in this module is to get a different type
+of <i>decomposition</i> for real symmetric matrices: one
+that involves eigenvectors.
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Let's work our way towards the spectral theorem:
+  <ul>
+  <li> From Theorem 12.1, a symmetric matrix \({\bf A}_{n\times n}\) 
+       has \(n\) eigenvalues (with possible duplicates amongst them),
+       and \(n\) corresponding orthogonal eigenvectors
+       \({\bf x}_1,{\bf x}_2,\ldots,{\bf x}_n\).
+
+  <p><li> As we've done before, let's put the eigenvectors into a
+  matrix:
+    $$
+       {\bf S}
+       \eql
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf x}_1 & {\bf x}_2 & \cdots & {\bf x}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+    $$
+
+  <p><LI> We also showed that if \({\bf \Lambda}\) is the diagonal
+  matrix 
+    $$
+      {\bf \Lambda} \eql
+      \mat{\lambda_1 & 0         &        & 0 \\
+           0         & \lambda_2 &        & 0 \\
+           \vdots    &           & \ddots & \\
+           0         & 0         &        & \lambda_n      
+      }
+    $$
+    (with the eigenvalues on the diagonal) then
+     $$
+       {\bf A S}
+       \eql
+       {\bf S \Lambda}
+     $$
+
+  <p><li> Now, right multiply by \({\bf S}^T\):
+     $$
+       {\bf A S} {\bf S}^T
+       \eql 
+       {\bf S \Lambda} {\bf S}^T
+     $$
+
+  <p><li> Which means
+     $$
+       {\bf A}
+       \eql 
+       {\bf S \Lambda} {\bf S}^T
+     $$
+
+  <p><li> That is, \({\bf A}\) is decomposed or factored into a
+    product of three matrices, one of which is diagonal and the
+    other two orthogonal.
+
+  <p><li> Sometimes we say that the matrix \({\bf A}\) is
+     <i>orthogonally diagonalizable</i> if it can be 
+     factored as above.
+
+  <p><li><b>Theorem 12.2:</b> A real symmetric matrix \({\bf A}\) 
+    can be orthogonally diagonalized. That is, it can be 
+    written as \({\bf A}={\bf S \Lambda} {\bf S}^T\) where
+    \({\bf \Lambda}\) is the diagonal matrix of eigenvalues
+    and the columns of \({\bf S}\) are orthogonal eigenvectors.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+An alternative way of writing the spectral decomposition:
+  <ul>
+  <li> Here we'll use useful fact #6 (see above), the outer product.
+
+  <p><li> The starting point is the decomposition:
+     $$
+       {\bf A}
+       \eql 
+       {\bf S \Lambda} {\bf S}^T
+     $$
+
+  <p><li> The product \({\bf S \Lambda}\) can be written
+    $$
+       {\bf S \Lambda}
+       \eql
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         {\bf x}_1 & {\bf x}_2 & \cdots & {\bf x}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+      \mat{\lambda_1 & 0         &        & 0 \\
+           0         & \lambda_2 &        & 0 \\
+           \vdots    &           & \ddots & \\
+           0         & 0         &        & \lambda_n      
+      }
+
+      \eql
+
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         \lambda_1{\bf x}_1 & \lambda_2{\bf x}_2 & \cdots & \lambda_n{\bf x}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+    $$
+
+ <p><li> Therefore 
+    $$
+       {\bf A }
+       \eql
+       {\bf S \Lambda} {\bf S}^T
+       \eql
+
+       \mat{ &  &  & \\
+         \vdots & \vdots & \vdots & \vdots\\
+         \lambda_1{\bf x}_1 & \lambda_2{\bf x}_2 & \cdots & \lambda_n{\bf x}_n\\
+         \vdots & \vdots & \vdots & \vdots\\
+          & & & 
+         }
+       \mat{
+          \ldots & {\bf x}_1^T & \ldots \\
+          \ldots & {\bf x}_2^T & \ldots \\
+                 & \vdots & \\
+          \ldots & {\bf x}_n^T & \ldots \\
+       }
+
+       \eql
+       \sum_{i=1}^n \lambda_i {\bf x}_i {\bf x}_i^T 
+    $$
+ 
+
+  <p><li> Why is this useful?
+  
+  <p><li> Suppose the eigenvectors were ordered so that 
+       \(\lambda_1 \geq \ldots \geq \lambda_n\)
+
+  <p><li> It's possible that many of these are zero, or near zero.
+
+  <p><li> Suppose, for instance, that 
+     \(\lambda_1 \geq \ldots \geq \lambda_k \geq \lambda_{k+1} = \ldots
+     \lambda_n = 0\)
+
+  <p><li> Then
+    $$
+       {\bf A }
+       \eql
+       \sum_{i=1}^k \lambda_i {\bf x}_i {\bf x}_i^T 
+
+    $$
+
+  <p><li> Thus the matrix can be seen as a weighted sum of eigenvector combinations.
+
+  <p><li> The storage requirements are smaller if we only store the 
+    eigenvectors with non-zero eigenvalues.
+
+  <p><li> Later, when we study the SVD, we will use this idea to
+  compress data.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 7:
+</b>
+Download <a href="examples/SymmetricExample2.java">SymmetricExample2.java</a>,
+and create a \(3\times 3\) symmetric matrix with rank=1. Then 
+compile and execute to print its eigenvalues. 
+</font>
+<!--
+Only one is nonzero. The # nonzero eigenvalues = rank.
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+The connection between rank and nonzero eigenvalues:
+  <ul>
+  <li><b>Theorem 12.3:</b> For a symmetric matrix, the number of
+  nonzero eigenvalues equals its rank.
+  
+  <p><li> We'll prove this in steps.
+
+  <p><li> First, consider a matrix product \({\bf C}_{m\times k}
+   ={\bf A}_{m\times n} {\bf B}_{n\times k}\).
+
+  <p><li> Let \({\bf r}=(r_1,r_2,\ldots, r_n)\) be the first row of 
+   \({\bf A}\).
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 8:
+</b>
+Prove that the first row of \({\bf C}\) is a linear
+combination of the rows of \({\bf B}\) using
+the numbers \(r_1,r_2,\ldots, r_n\) as scalars.
+</font>
+<!--
+Simple application of multiplication.
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  <p><li> In the same way, each row of \({\bf C}\) is
+   linear combination of the rows of \({\bf B}\).
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 9:
+</b>
+Use transposes to show that the columns of 
+\({\bf C}\) are linear combinations of the
+columns of \({\bf A}\).
+</font>
+<!--
+C^T = B^T A^T. Which means the rows of C^T are linear
+combinations of the rows of A^T. 
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  <p><li><b>Proposition 12.4:</b> For the matrix product \({\bf C}={\bf AB}\):
+    $$
+       \mbox{rank}({\bf C}) \eql \mbox{min}(\mbox{rank}({\bf A}), \mbox{rank}({\bf B})
+    $$
+    <b>Proof:</b>
+    Since the rows of \({\bf C}\) are linear combinations of
+    the rows of \({\bf B}\), the rank of \({\bf C}\)'s rowspace
+    can be no greater than that of \({\bf B}\). Similarly, the rank
+    of \({\bf C}\)'s colspace can be no greater than that
+    of \({\bf A}\)'s colspace.
+    \(\;\;\;\;\Box\)
+
+
+  <p><li> With this, we can prove Theorem 12.3.
+
+  <p><li><b>Proof of Theorem 12.3:</b>
+  Let symmetric matrix \({\bf A}\) have spectral decomposition
+  \({\bf A }={\bf S \Lambda} {\bf S}^T\).
+  Then, 
+    $$
+       \mbox{rank}({\bf A}) \leq \min(
+         \mbox{rank}(({\bf S \Lambda}), \mbox{rank}({\bf S}^T)))
+       \leq
+       \min(\mbox{rank}({\bf S}), \mbox{rank}({\bf \Lambda}), \mbox{rank}({\bf S}^T))
+    $$
+    And so, \(\mbox{rank}({\bf A})\leq \mbox{rank}({\bf \Lambda})\).
+    Now, rewrite the decomposition as 
+    \({\bf \Lambda}={\bf S}^T {\bf A} {\bf S}\)
+    and apply the same rank inequality to get
+    \(\mbox{rank}({\bf \Lambda})\leq \mbox{rank}({\bf A})\).
+    Thus, 
+    \(\mbox{rank}({\bf \Lambda}) = \mbox{rank}({\bf A})\),
+    which is equal to the number of nonzero eigenvalues.
+    \(\;\;\;\;\Box\)
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 10:
+</b>
+Why is the last conclusion true? That is, why is the rank
+of \({\bf \Lambda}\) the number of nonzero eigenvalues?
+</font>
+<!--
+These will be the pivot columns.
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Positive eigenvalues:
+  <ul>
+  <li> In many applications (see below) it's useful to have 
+   positive eigenvalues.
+
+  <p><li> If we want the eigenvalues to be positive, what does
+    this imply about the matrix?
+
+  <p><li><b>Proposition 12.5:</b>
+  If the eigenvalues of a symmetric matrix \({\bf A}\) are positive, then for
+  every nonzero vector \({\bf z}\) the number \({\bf z}^T {\bf Az} > 0\).
+  <br><b>Proof:</b>
+  Suppose the eigenvalues are positive, i.e.,
+  \(\lambda_1 \geq \lambda_2 \geq \ldots \geq \lambda_n > 0\).
+  Next, let \({\bf x}_1,{\bf x}_2,\ldots,{\bf x}_n\) be the
+  corresponding eigenvectors. Let \({\bf z}\) be any nonzero vector.
+  Since the \({\bf x}_i\)'s form a basis, we can express 
+  \({\bf z}\) as some linear combination of the \({\bf x}_i\)'s
+   $$
+       {\bf z} \eql \alpha_1 {\bf x}_1 + \alpha_2 {\bf x}_2 + \ldots +
+            \alpha_n {\bf x}_n
+   $$
+  And since the \({\bf x}_i\)'s are orthogonal, \(\alpha_i = {\bf
+  z}^T{\bf x}_i\).
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 11:
+</b>
+Why is the last conclusion true? 
+Also, show that 
+\(|{\bf z}|^2 = \alpha_1^2 + \alpha_2^2 + \ldots + \alpha_n^2\).
+</font>
+<!--
+(1) Just do the dot product of z with x_i.
+(2) Same approach.
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  Next, observe that
+    $$\eqb{
+       {\bf z}^T {\bf Az} 
+           & \eql & 
+           (\alpha_1 {\bf x}_1 + \alpha_2 {\bf x}_2 + \ldots +
+            \alpha_n {\bf x}_n)^T
+           {\bf A} (\alpha_1 {\bf x}_1 + \alpha_2 {\bf x}_2 + \ldots +
+            \alpha_n {\bf x}_n)\\
+
+           & \eql & 
+           (\alpha_1 {\bf x}_1 + \alpha_2 {\bf x}_2 + \ldots +
+            \alpha_n {\bf x}_n)^T
+           (\alpha_1 \lambda_1 {\bf x}_1 + \alpha_2 \lambda_2{\bf x}_2 + \ldots +
+            \alpha_n \lambda_n{\bf x}_n)\\
+           & \eql & 
+           \alpha_1^2\lambda_1 + \alpha_2^2 \lambda_2 + \ldots +
+           \alpha_n^2 \lambda_n \\
+           & \geq & 
+           \lambda_{min} |{\bf z}|\\
+           & > & 0
+    }$$
+   where \(\lambda_{min}\) is the smallest of the eigenvalues.
+   \(\;\;\;\;\;\Box\)
+
+  <p><li> Terminology: a symmetric matrix for which 
+      \({\bf z}^T {\bf Az} > 0\) for every nonzero vector 
+  \({\bf z}\) is called  a <i>positive-definite</I> matrix.
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 12:
+</b>
+Show that \({\bf A}^T{\bf A}\) is positive definite for
+any matrix \({\bf A}\).
+</font>
+<!--
+Consider z^T (A^T A) z = (Az)^T (Az)
+Let y=Az
+This is the same as y^T y = |y|^2, which is positive when
+y is nonzero.
+-->
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+  </ul>
+
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+<P>
+<HR></P>
+<h2><FONT COLOR="#000080">
+Principal component analysis (PCA)
+</font></h2>
+<P><FONT COLOR="#000060">
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+The main idea in PCA is:
+  <ul>
+  <li> Sometimes we have data where the obvious patterns are hard to
+  see.
+  <p><li> It can be hard because:
+     <ul>
+     <li> The dimension is very high, and not amenable to visualization.
+     <li> The data represents a numeric representation of non-numeric
+     data (such as word vectors).
+     <li> There is interfering data that gets in the way of a good visualization.
+     </ul>
+
+  <p><li> Noise is also a problem, but that needs statistical techniques.
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\rhd\)
+	  Not the domain of linear algebra.
+
+  <p><li> Let's first look at an example.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 13:
+</b>
+Download and unpack <a href="examples/PCA.zip">PCA.zip</a>.
+Then:
+ <ol>
+ <li> Compile and execute <font color="#000000"><tt>DataExample.java</tt></font>.
+ <li> Plot one dimension against another, for example,
+ plot <font color="#000000"><tt>p.x[0]</tt></font> against <font color="#000000"><tt>p.x[1]</tt></font>. Does this help?
+ <li> Compile and execute <font color="#000000"><tt>PCAExample.java</tt></font>.
+ </ol>
+What do you notice about the pattern in the third case?
+Which dimension of the PCA coordinates is plotted?
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 14:
+</b>
+Examine the code in the method <font color="#000000"><tt>pcaCoords()</tt></font>
+in <font color="#000000"><tt>PCA.java</tt></font>. What are the steps before
+the eigenvectors are computed?
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Let's point out some features of the example:
+  <ul>
+  <li> The data is a series of 3D points.
+
+  <p><li> The "true" pattern is hard to see with the raw data.
+
+  <p><li> Applying PCA brings out the pattern quite clearly.
+
+  <p><li> The PCA-derived pattern is based on a change in coordinates.
+
+  <p><li> The <i>first</i> coordinate appears to be the most important.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Let's take a look at this mysterious PCA in steps.
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+First, let's see what it does at a high level:
+  <font color="#000000"><pre>
+  1.   Center the data.                                  <font color="#dc143c">// So that the mean is zero.</font>
+  2.   Compute the covariance matrix <b>C</b>
+  3.   Get the eigenvector matrix <b>S</b> for <b>C</b>.
+  4.   If needed, sort the columns of <b>S</b> by
+       decreasing eigenvalue.
+  5.   Change the coordinates of the data using 
+       <b>S</b> as the basis.
+  6.   Use the first few coordinates                     <font color="#dc143c">// Corresponding to large eigenvalues.</font>
+  </pre></font>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Now let's work through and see what's going on.
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+First, let's examine the steps before computing the eigenvectors:
+  <ul>
+  <li> The data is a collection of m-dimensional points, e.g.
+     $$\eqb{
+        {\bf x}_1 & \eql & (1.0, 2.5, -1.0) \\
+        {\bf x}_2 & \eql & (1.5, 3.5, 3.0) \\
+        {\bf x}_3 & \eql & (0.5, 3.0, 0)\\
+        {\bf x}_4 & \eql & (2.0, 4.0, -0.5)\\
+        {\bf x}_5 & \eql & (1.5, 4.5, 0) \\
+        {\bf x}_6 & \eql & (2.5, 0.5, 1.0)
+     }
+     $$
+
+  <p><li> Here, we have 6 data points, each with of dimension 3.
+
+  <p><li> Let's put these as columns of a <i>data matrix</i> we will
+   call \({\bf X}\):
+    $$
+       {\bf X} \eql
+       \mat{
+	    1.0 & 1.5 & 0.5 & 2.0 & 1.5 & 2.5\\
+	    2.5 & 3.5 & 3.0 & 4.0 & 4.5 & 0.5\\
+            -1.0 & 0.5 & 0 & -0.5 & 0 & 1.0
+       }
+    $$
+    Here data point \({\bf x}_k\) is the k-th column.
+
+  <p><li> The <i>mean</i> is the vector that's the average across
+   the columns:
+    $$
+       {\bf \mu} \eql \frac{1}{n} \sum_{k=1}^n {\bf x}_k
+    $$
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 15:
+</b>
+Download and add code to <a href="examples/SimpleExample.java">SimpleExample.java</a>
+to compute the mean vector for the above data.
+You will need your <font color="#000000"><tt>MatrixTool</tt></font> as well.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  <p><li> Next, we <i>center</i> the data by subtracting the mean
+    vector from each data vector:
+    $$
+         {\bf x}_k \;\; \leftarrow \;\; {\bf x}_k - {\bf \mu}
+    $$
+    That is, subtract the mean-vector from each column.
+
+  <p><li> In the above example, the centered data turns out to be:
+   $$
+      \mat{
+      -0.5 &  0 & -1.0 & 0.5  & 0 & 1.0\\
+      -0.5 &  0.5 &   0 & 1.0 & 1.5 & -2.5\\
+      -1.0 &  0.5 &  0  & -0.5 &  0 & 1.0}
+   $$
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 16:
+</b>
+Download and add code to <a href="examples/SimpleExample2.java">SimpleExample2.java</a>
+to center the data. Check that the mean of the centered data is the
+  zero vector.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  <p><li> We'll next compute the covariance of the <i>centered</i> data.
+
+  <p><li> Suppose we use the notation
+    $$
+       {\bf x}_k (i) \eql \mbox{ the i-th component of vector }
+    {\bf x}_k
+    $$
+
+  <p><li> Then define
+    $$
+       {\bf c}_k (i,j) \;\; \defn \;\; {\bf x}_k (i) \times {\bf x}_k (j)
+    $$
+    Think of this as:
+    <ul>
+    <li> You take a data vector \({\bf x}_k\), such as \({\bf
+    x}_3=(0.5,3.0, 0)\)
+    <li> You compute all possible products of its components:
+       $$\eqb{
+         {\bf c}_3 (1,1) & \eql & 0.5 \times 0.5 & \eql & 0.25\\
+         {\bf c}_3 (1,2) & \eql & 0.5 \times 3.0 & \eql & 1.5\\
+         {\bf c}_3 (1,3) & \eql & 0.5 \times 0.0 & \eql & 0\\
+         {\bf c}_3 (2,1) & \eql & 3.0 \times 0.5 & \eql & 1.5\\
+         {\bf c}_3 (2,2) & \eql & 3.0 \times 3.0 & \eql & 9\\
+         {\bf c}_3 (2,3) & \eql & 3.0 \times 0 & \eql & 0\\
+         {\bf c}_3 (3,1) & \eql & 0 \times 0.5 & \eql & 0\\
+         {\bf c}_3 (3,2) & \eql & 0 \times 3.0 & \eql & 0\\
+         {\bf c}_3 (3,3) & \eql & 0 \times 0 & \eql & 0\\
+       }$$
+    </ul>
+
+  <p><li> We'll put this into a matrix
+    $$
+       {\bf C}_k \eql 
+        \mat{ & \vdots & \\
+              \ldots & {\bf c}_k(i,j) & \ldots \\
+              & \vdots & 
+        }
+    $$
+
+  <p><li> In the above example:
+    $$
+       {\bf C}_3 \eql 
+         \mat{0.25 & 1.5 & 0\\
+              1.5  & 9  & 0 \\
+               0 & 0 & 0}
+    $$
+
+  <p><li> The covariance of the data set is the average of these 
+   \({\bf C}_k\)'s.
+     $$
+        {\bf C} \eql \frac{1}{n} \sum_{k=1}^n {\bf C}_k
+     $$
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 17:
+</b>
+Download and add code to <a href="examples/SimpleExample3.java">SimpleExample3.java</a>
+to compute the covariance matrix.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+  <p><li> There is a convenient (for theory) way to write the covariance by exploiting
+   one of the useful facts we learned earlier.
+
+  <p><li> Observe that (for centered data):
+    $$
+       {\bf C}_k \eql {\bf x}_k {\bf x}_k^T
+    $$ 
+    This is a column-vector times a row vector that gives us a matrix.
+
+  <p><li> Then, the covariance matrix of centered data can be written as
+       $$\eqb{
+        {\bf C} & \eql & \frac{1}{n} \sum_{k=1}^n {\bf C}_k\\
+            & \eql & 
+            \frac{1}{n}\left(
+               {\bf x}_1 {\bf x}_1^T + {\bf x}_2 {\bf x}_2^T
+               + \ldots + {\bf x}_n {\bf x}_n^T
+            \right) \\
+            & \eql & 
+           \frac{1}{n} {\bf XX}^T
+       }$$
+
+
+  <p><Li> OK, we now have centered data and its covariance.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Let's understand what the eigenvectors of the covariance mean:
+  <ul>
+  <li> First and most importantly, \({\bf C}\) is a <i>symmetric matrix</i>.
+ 
+  <p><li> By the spectral theorem
+    $$
+         {\bf C} \eql {\bf S} {\bf \Lambda} {\bf S}^T
+    $$
+    where \({\bf S}\) consists of the eigenvectors as columns.
+
+  <p><Li> Now, we will assume that the eigenvectors in \({\bf S}\)
+    are ordered in decreasing order of corresponding eigenvalue:
+    <ul>
+    <li> That is, suppose we renumber and order the eigen<i>values</i>
+         such that \(\lambda_1 \geq \lambda_2 \geq \ldots \geq \lambda_n\).
+    <li> Then, let \({\bf s}_1, {\bf s}_2, \ldots, {\bf s}_n\) be
+         the corresponding eigenvectors.
+    <li> We will let \({\bf s}_i\) be the i-th column of \({\bf S}\).
+    </ul>
+
+  <p><li> In other words, if we have a spectral decomposition
+    $$
+         {\bf C} \eql {\bf S} {\bf \Lambda} {\bf S}^T
+    $$
+    without such an order, we can re-order within the matrices
+    \({\bf S}\) and \({\bf \Lambda}\) in decreasing (or increasing)
+    order of eigenvalues.
+
+  <p><li> It's not obvious that this is possible.
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 18:
+</b>
+Apply useful fact #1 to prove that it's possible.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+  <p><li> Since we've ordered by eigenvalue, the first eigenvector 
+    has the most "stretch":
+    $$
+       {\bf C} {\bf s}_1 \eql \lambda_1 {\bf s}_1
+    $$
+    <ul>
+    <li> We know that \(\lambda_1 \geq \lambda_i\)
+    <li> Thus, amongst all the eigenvectors, \({\bf s}_1\) gets
+    stretched the most by the covariance matrix.
+    </ul>
+
+  <p><li> Then, intuitively, the <i>direction</i> of this eigenvector
+   must be the direction in which we observe the most variation.
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 19:
+</b>
+Enter the <font color="#000000"><tt>PCAzip</tt></font> directory, and compile and execute 
+<font color="#000000"><tt>DataExample2.java</tt></font>. Examine the code.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+    <ul>
+    <li> The data is a cloud of points.
+    <li> The code plots the first eigenvector.
+    <Li> The direction is along where the variance is maximum.
+    </ul>
+
+  <p><li> We will prove this formally a little later.
+
+  </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+The remainder of PCA: change of basis
+  <ul>
+  <li> The next step in PCA is to "reimagine" the data in the basis
+     formed by the eigenvectors.
+
+  <p><li> The spectral theorem tells us that the eigenvectors, columns
+    of \({\bf S}\), are an <i>orthogonal basis</i>.
+
+  <p><li> So, if \({\bf x}_i\) is a data vector, then 
+     $$
+         {\bf y}_i \eql {\bf S}^{-1} {\bf x}_i
+     $$
+     is the same vector but with the coordinates using the
+     eigenvectors as the basis.
+
+  <p><li> Since \({\bf S}\) is orthogonal
+     $$
+           {\bf S}^{-1} \eql {\bf S}^T
+     $$
+
+  <p><li> So
+     $$
+         {\bf y}_i \eql {\bf S}^T {\bf x}_i
+     $$
+
+  <p><li> If the data vectors are in a matrix \({\bf X}\) then
+     $$
+         {\bf Y} \eql {\bf S}^T {\bf X}
+     $$
+     gives us a new data matrix \({\bf Y}\) with new coordinates.
+
+
+  <p><li> The hope, of course, is that the new coordinates reveal
+    patterns in the data.
+
+  <p><li> In pseudocode:
+    <font color="#000000"><pre>
+    <b>Algorithm:</b> PCAcoordinates (<b>X</b>)
+    <b>Input:</b> a data matrix <b>X</b>
+    1.    <b>X</b> = centerData (<b>X</b>)
+    2.    <b>C</b> = covariance (<b>X</b>)
+    3.    <b>S</b> = computeSortedEigenvectors (<b>C</b>)
+    4.    <b>Y</b> = <b>S</b><sup>T</sup> <b>X</b>
+    5.    <b>return</b> <b>Y</b>
+    </pre></font>
+
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Finally, let's address "why it works":
+  <ul>
+  <li> First, if \({\bf B}\) is any change-of-basis matrix and
+       \({\bf X}\) is already centered data, then
+       $$
+           {\bf Y} \eql {\bf BX}
+       $$
+       is also centered.
+
+  <p><li> That is, the change of coordinates leaves the new
+  coordinates or transformed data also centered.
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 20:
+</b>
+Prove this using the following steps. Let \({\bf z}=(1,1,\ldots,1)\)
+be a vector with all 1's. Then, show that \({\bf Xz} = {\bf 0}\)
+when the data \({\bf X}\) is centered.
+Next, show that \({\bf Yz} = {\bf 0}\) by substituting 
+\({\bf Y} = {\bf BX}\). This implies that \({\bf Y}\) is centered.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  <p><li> Now let's turn our attention to the transformed coordinates
+    $$
+         {\bf Y} \eql {\bf S}^T {\bf X}
+    $$
+
+  <p><li> Because \({\bf Y}\) is centered, the new covariance is
+    $$
+        \frac{1}{n} {\bf YY}^T
+    $$
+
+  <p><li> Substituting
+    $$\eqb{
+        \frac{1}{n} {\bf YY}^T & \eql & 
+             ({\bf S}^T {\bf X})  ({\bf S}^T {\bf X})^T \\
+        & \eql & 
+             ({\bf S}^T {\bf X})  {\bf X}^T {\bf S} \\
+        & \eql & 
+             {\bf S}^T ({\bf X}  {\bf X}^T) {\bf S} \\
+        & \eql & 
+             {\bf S}^T {\bf C} {\bf S} \\
+    }$$
+    where \({\bf C}\) is the covariance matrix of the data \({\bf X}\).
+
+  <p><li> Recall how we got \({\bf S}\): as eigenvectors of \({\bf C}\).
+
+  <p><li> By the spectral theorem:
+    $$
+         {\bf C} \eql {\bf S} {\bf \Lambda} {\bf S}^T
+    $$
+
+  <p><li> Substituting for \({\bf C}\) in the earlier expression:
+    $$\eqb{
+        \frac{1}{n} {\bf YY}^T & \eql & 
+             {\bf S}^T {\bf C} {\bf S} \\
+        & \eql & 
+             {\bf S}^T {\bf S} {\bf \Lambda} {\bf S}^T {\bf S} \\
+        & \eql & 
+             {\bf \Lambda} 
+    }$$
+
+
+  <p><li> In other words, the covariance matrix of \({\bf Y}\)
+   is a <i>diagonal</i> matrix.
+   <ul>
+   <li> The off-diagonal entries are all zero.
+   <li> All the dimensions in \({\bf Y}\) have been de-correlated.
+   </ul>
+
+  <p><li> Thus, in the transformed coordinates, there is no
+  correlation between different dimensions.
+
+  <p><li> Further theory (it's a bit involved) can prove that
+    this transformation concentrates the variance so that
+    the first dimension maximizes the variance.
+
+  </ul>
+
+
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+<P>
+<HR></P>
+<h2><FONT COLOR="#000080">
+Kernel PCA
+</font></h2>
+<P><FONT COLOR="#000060">
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+The strength and weakness of PCA: it's a linear transformation
+  <ul>
+  <Li> The transformation of the data is:
+    $$
+         {\bf Y} \eql {\bf S}^T {\bf X}
+    $$
+
+  <p><li> We know that matrix multiplication is a <i>linear</i>
+  transformation (Module 8).
+
+  <p><li> There are of course limitations to linear transformations:
+    <ul>
+    <li> If the data is inherently nonlinear, the transformation keeps
+         this nonlinearity.
+    <li> A linear transformation is merely a change of viewpoint
+         in n-dimensional space.
+    </ul>
+
+  <p><li> Let's look a little deeper at that last point.
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 21:
+</b>
+Enter the <font color="#000000"><tt>PCAzip</tt></font> folder and execute <font color="#000000"><tt>DataViewer3D</tt></font>
+(you need <font color="#000000"><tt>draw3d.jar</tt></font> in your CLASSPATH) to see
+the data in our first example. Move around in the 3D space to
+see that you can somewhat see the same pattern that PCA revealed.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+  <p><LI> Thus, what PCA did for us is to automatically reveal the
+   data without having to manually change the view.
+
+
+  <p><li> This is particularly valuable in high-dimensional spaces
+    for which there is no natural way to view the data.
+
+
+  <p><Li> But PCA can perform poorly with inherently non-linear data.
+
+
+  <p><li> Let's illustrate with a common application: clustering.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+About <i>clustering</i>
+  <ul>
+  <li> One of the simplest and most useful patterns in data is to 
+    see the data group into <i>clusters</i>.
+
+  <p><li> Examples:
+    <ul>
+    <li> Wind patterns that are normal vs. storm-inducing.
+    <Li> ECGs that indicate a normal heart vs. an unhealthy one.
+    </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 22:
+</b>
+Do a search on clustering and find two other applications 
+of clustering.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+  <p><li> The input to a clustering problem: a set of m-dimensional 
+    data points and a number \(K\)
+
+  <p><li> The output: the same points, each assigned to one
+     of \(K\) clusters.
+
+  <p><li> Often, the number of clusters is decided ahead of time.
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\rhd\)
+	  In some problems, however, \(K\) is an <i>output</i>.
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 23:
+</b>
+Execute <font color="#000000"><tt>DataExample3</tt></font> to see an example of raw
+data in four clusters. Then execute <font color="#000000"><tt>PCAExample3</tt></font> 
+to see that the clusters carry over to PCA coordinates.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Clustering algorithms:
+  <ul>
+  <li> There are many popular clustering algorithms, a full
+  description of which would take us off topic.
+
+  <p><li> We'll instead present two high level ideas:
+     <ul>
+     <li> Clustering using <i>centers</i>
+     <li> Clustering using <i>hyperplanes</i>
+     </ul>
+
+  <p><li> Using centers:
+     <ul>
+     <li> Start with some random "centers":
+           <p><img height="400" width="460" src="figures/kmeans.png"><p>
+     <li> Iterate, moving centers, until the centers stabilize:
+           <p><img height="400" width="460" src="figures/kmeans2.png"><p>
+     </ul>
+
+     The algorithm works like this:
+     <font color="#000000"><pre>
+     <b>Algorithm:</b> kMeans (<b>X</b>, K)
+     <b>Input:</b> data points in columns of <b>X</b>, number of clusters K 
+     1.   find initial locations for K centroids
+     2.   <b>while</b> centers not stabilized
+              <font color="#dc143c">// Assignment to centroids</font>
+     3.       <b>for each</b> point <b>x</b><sub>i</sub>
+     4.           assign to cluster associated with closest centroid
+     5.       <b>endfor</b>
+              <font color="#dc143c">// Recompute centroid locations</font>
+     6.       <b>for each</b> cluster
+     7.           cluster centroid = average of coordinates in cluster
+     8.       <b>endfor</b>
+     9.   <b>endwhile</b>
+     10.  <b>return</b> clusters
+     </pre></font>
+
+
+  <p><li> Hyperplane algorithms seek to find hyperplanes that
+    divide up the points so that each cluster can be separated:
+    <p><img height="400" width="460" src="figures/hyperplane.png"><p>
+
+  <p><li> Hyperplane separation is a staple of machine-learning:
+     <ul>
+     <li> Neural networks
+     <li> Support vector machines
+     <li> Logistic regression
+     </ul>
+     
+
+  <p><li> We will be less concerned about how these algorithms work
+     than with <i>pre-processing</i> the data via PCA to make them
+     work well.
+
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+A difficult clustering problem:
+  <ul>
+  <li> Sometimes the data can be inherently difficult to separate 
+    via planes or centers, even if the clusters are obvious.
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 24:
+</b>
+Execute <font color="#000000"><tt>DataExample4</tt></font> to see an example of raw
+data in two obvious clusters.
+Explain why a couple of hyperplanes won't work to separate
+the data. Also explain what could go wrong with the
+K-means algorithm.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+  <p><li> In preprocessing the data, we could apply PCA
+   to get new coordinates and cluster based on <i>those coordinates</i>.
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 25:
+</b>
+Execute <font color="#000000"><tt>PCAExample4</tt></font> to see what PCA does
+for clustering. Are the PCA-transformed points
+easier to cluster?
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+  <p><li> Unfortunately, direct PCA doesn't help either.
+
+  <p><li> The fundamental problem is that the two clusters are
+   inherently non-linear, while PCA is a linear transformation
+   that will preserve the non-linearity in the data.
+
+  <p><li> What we need: a nonlinear version of PCA.
+  </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 26:
+</b>
+Execute <font color="#000000"><tt>KernelPCAExample</tt></font> to see the transformation
+achieved by Kernel-PCA.
+Are these points easier to cluster?
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Kernel-PCA:
+  <ul>
+  <li> There are a couple of key ideas:
+     <ul>
+     <li> Use a non-linear function \(\phi\) to transform the data.
+     <li> The transformed data is usually in a <i>higher dimension</i>
+     <li> Then, apply clustering analysis to the transformed data.
+     </ul>
+
+  <p><li> Terminology: the functions \(\phi\) are called kernel functions.
+
+  <p><li> For example:
+     <ul>
+     <li> Suppose we had 2D data in two concentric circles around the origin.
+     <li> The raw data is \((x_i,y_i)\) pairs.
+     <Li> We could define
+       $$
+           \phi(x,y) \eql (x^2+y^2, x, y)
+       $$
+     <li> Clearly, the first dimension of the transformed data would
+     be enough to cleanly separate the data.
+     </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 27:
+</b>
+Why is this so? Explain with some example raw data for
+the two-concentric circles case.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  <p><li> Of course, in this example, we <i>knew</i> the data
+   was in concentric circles, which helped us design \(\phi\).
+
+  <p><li> We want a generic algorithm that will work for
+    many applications.
+
+  <p><li> One approach: build a similarity matrix.
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+A similarity kernel function:
+  <ul>
+  <li> Suppose we have \(n\) data points 
+       \({\bf x}_1, {\bf x}_2, \ldots, {\bf x}_n\) each 
+       of dimension \(m\).
+
+  <p><li> Suppose that we could define, for each pair 
+    \({\bf x}_i, {\bf x}_j\), how "similar" or "close" they are:
+    $$
+        {\bf A}_{ij} \;\; \defn \;\; \mbox{ similarity between points
+    i and j}
+    $$
+
+  <p><li> Then define
+    $$
+        \phi({\bf x}_i) \;\; \defn \;\;
+          ({\bf A}_{i1}, {\bf A}_{i2}, \ldots, {\bf A}_{in})
+    $$
+
+  <p><li> In other words, for each data point \({\bf x}_i\), the
+   transformed coordinates are the vector of similarities
+   of <i>other points</i> to \({\bf x}_i\).
+
+  <p><li> What is the intuition? Why should this work?
+     <ul>
+     <li> We want similar points to have a higher chance of being
+          in the same cluster.
+     <li> The similarity vector explicitly quantifies similarity.
+     <li> The hope is that this results in natural clusters.
+     </ul>
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+<font color="#8B4513"><b> In-Class Exercise 28:
+</b>
+Examine the kernel-PCA code in <font color="#000000"><tt>PCA.java</tt></font> to confirm
+the computation of similarity.
+</font>
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+
+  </ul>
+
+
+<table> <tr> <td height=7> &nbsp; </td> </tr> </table><p>
+Summary:
+  <ul>
+  <li> With PCA and kernel-PCA, we have dipped our toes into the vast
+    field called <I>machine learning</i>.
+
+  <p><li> Linear algebra is a key building block of that field.
+
+  <p><li> Even though the ideas above are simple to apply, their
+    effectiveness on actual problems is varied.
+
+  <p><li> Often a combinations of tools is needed to really ferret out
+    the valuable patterns in data.
+  </ul>
+
+
+
+
+
+<P>
+<HR WIDTH="100%"></P>
+<center>
+<font size="1">
+&copy; 2016, Rahul Simha
+</font>
+</center>
+
+</BODY>
+</HTML>
